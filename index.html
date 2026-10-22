@@ -1,0 +1,818 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>暴風雨後的街道</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: projector-first 16:9 3D stage with HUD laid over it; cards, notebook and coach as overlays; fixed-point view as a bottom panel; short teacher notes below. One committed post-storm slate look. */
+:root{
+  --bg:#12191c; --panel:#1c262b; --panel2:#243138; --line:#344750;
+  --ink:#e9eff1; --muted:#9db0b7; --coat:#f2b632; --wet:#74b3c4;
+  --ok:#86c77f; --bad:#e8775f;
+  --display:"LXGW WenKai TC","Kaiti TC","STKaiti","KaiTi",serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 32px}
+.wrap{max-width:calc(78vh * 16 / 9);min-width:0;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px}
+h1{font-family:var(--display);font-size:clamp(24px,3.4vw,36px);margin:0;line-height:1.1;text-wrap:balance}
+h1 small{display:block;font-family:var(--body);font-size:13px;color:var(--muted);font-weight:400;margin-top:6px;letter-spacing:.02em}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:14px}
+.btn:hover{border-color:var(--wet)}
+.btn.primary{background:var(--coat);color:#1b1407;border-color:var(--coat);font-weight:700}
+.btn:disabled{opacity:.5;cursor:default}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--coat);outline-offset:2px}
+
+.stage{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;border-radius:14px;overflow:hidden;background:#8d9a9e;border:1px solid var(--line);touch-action:none;user-select:none;-webkit-user-select:none}
+.stage:fullscreen{aspect-ratio:auto;width:100%;height:100%;border-radius:0;border:0}
+.stage canvas{display:block;width:100%;height:100%;cursor:grab}
+.stage canvas:active{cursor:grabbing}
+.hud{position:absolute;left:0;right:0;top:0;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;justify-content:space-between;padding:10px 12px;pointer-events:none}
+.glass{background:rgba(18,25,28,.74);border:1px solid rgba(255,255,255,.14);border-radius:10px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.zone{font-family:var(--display);font-size:clamp(16px,2.2vw,26px);padding:4px 14px}
+.route{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:5px 10px;font-size:clamp(11px,1.3vw,14px);max-width:60%}
+.route b{color:var(--coat);font-weight:700;margin-right:4px}
+.route .chip{background:var(--panel2);padding:1px 8px;border-radius:6px}
+.route .arr{color:var(--muted)}
+.count{padding:4px 12px;font-size:clamp(12px,1.4vw,15px);font-variant-numeric:tabular-nums}
+.count strong{color:var(--coat)}
+.pad{position:absolute;left:calc(12px + env(safe-area-inset-left,0px));bottom:12px;display:grid;grid-template-columns:repeat(3,clamp(36px,5vw,52px));grid-template-rows:repeat(3,clamp(36px,5vw,52px));gap:4px;opacity:.88}
+.pad button{background:rgba(18,25,28,.72);border:1px solid rgba(255,255,255,.2);border-radius:10px;font-size:clamp(14px,2vw,20px)}
+.pad button:active{background:var(--coat);color:#1b1407}
+.act{position:absolute;right:calc(12px + env(safe-area-inset-right,0px));bottom:14px;background:rgba(18,25,28,.8);border:2px solid rgba(255,255,255,.25);border-radius:999px;padding:clamp(6px,1vw,12px) clamp(12px,1.8vw,22px);font-size:clamp(13px,1.6vw,18px);font-weight:700;max-width:45%}
+.act.on{background:var(--coat);color:#1b1407;border-color:var(--coat);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.05)}}
+.hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);font-size:clamp(11px,1.2vw,13px);color:#dfe7ea;padding:3px 12px;pointer-events:none;white-space:nowrap}
+.next{position:absolute;left:12px;top:clamp(50px,7vw,64px);padding:4px 12px;font-size:clamp(12px,1.5vw,16px);pointer-events:none;border-color:rgba(242,182,50,.6);color:#fff3cf}
+.toast{position:absolute;left:50%;top:20%;transform:translateX(-50%);padding:8px 18px;font-size:clamp(13px,1.7vw,19px);max-width:80%;text-align:center;pointer-events:none;transition:opacity .3s;border-color:var(--wet)}
+
+.ov{position:absolute;inset:0;background:rgba(8,12,14,.55);display:flex;align-items:center;justify-content:center;padding:14px;overflow:auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;width:min(640px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.card h2{font-family:var(--display);font-size:clamp(22px,2.6vw,30px);margin:0;line-height:1.2}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--wet)}
+.senses{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.senses li{display:flex;gap:10px;align-items:baseline}
+.senses .k{flex:none;font-family:var(--display);font-size:18px;color:var(--coat);width:1.6em}
+.sentence{font-family:var(--display);font-size:clamp(18px,2.1vw,23px);background:var(--panel2);border-left:3px solid var(--coat);padding:10px 14px;border-radius:0 10px 10px 0;line-height:1.55}
+.q{font-weight:700}
+.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.opts button{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:16px}
+.opts button[data-m="直接描寫"]{border-bottom:3px solid #d65a4a}
+.opts button[data-m="間接描寫"]{border-bottom:3px solid #4a86d6}
+.opts button[data-m="比喻描寫"]{border-bottom:3px solid #5bb06a}
+.opts button.right{background:var(--ok);color:#10200e;border-color:var(--ok);font-weight:700}
+.opts button.wrong{border-color:var(--bad);color:var(--bad)}
+.fb{min-height:1.6em}
+.fb.ok{color:var(--ok)} .fb.no{color:var(--bad)}
+.words{display:flex;flex-wrap:wrap;gap:6px}
+.words span{background:rgba(242,182,50,.14);color:var(--coat);border:1px solid rgba(242,182,50,.35);padding:1px 10px;border-radius:999px;font-size:14px}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.tag{display:inline-block;background:var(--wet);color:#0d1f24;font-size:12px;font-weight:700;padding:1px 8px;border-radius:6px;margin-right:6px}
+.nb-item{border-top:1px solid var(--line);padding-top:8px;display:flex;flex-direction:column;gap:4px}
+.nb-zone{font-family:var(--display);font-size:19px;color:var(--wet);margin-top:6px}
+.tally{display:flex;flex-wrap:wrap;gap:6px}
+.tally span{background:var(--panel2);border-radius:8px;padding:2px 10px;font-size:13px;font-variant-numeric:tabular-nums}
+textarea{width:100%;min-height:90px;resize:vertical;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:16px}
+.coach-out{white-space:pre-wrap;background:var(--panel2);border-radius:10px;padding:10px 14px;min-height:3em;font-size:15px}
+.muted{color:var(--muted);font-size:13px}
+.steps-list{margin:0;padding-left:1.3em;display:grid;gap:4px}
+.fixedpanel{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);width:min(720px,calc(100% - 24px));padding:12px 16px;display:flex;flex-direction:column;gap:8px;border-color:rgba(242,182,50,.5)}
+.fixedpanel h3{margin:0;font-family:var(--display);font-size:clamp(18px,2.2vw,24px)}
+.fixedpanel .sentence{font-size:clamp(16px,1.9vw,21px);padding:8px 12px}
+.loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:22px;color:#fff;background:linear-gradient(#7f939b,#b8c3c3)}
+
+.notes{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.notes h3{font-family:var(--display);margin:0 0 6px;font-size:20px}
+.notes ol{margin:0;padding-left:1.3em;display:grid;gap:4px;max-width:70ch}
+
+@media (max-width:700px){
+  .ov{position:fixed;z-index:30;padding:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+  .route{max-width:100%}
+  .count,.hint{display:none}
+  .opts{grid-template-columns:1fr}
+  .fixedpanel{position:fixed;z-index:30;bottom:max(8px,env(safe-area-inset-bottom,0px))}
+}
+@media (prefers-reduced-motion:reduce){.act.on{animation:none}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>暴風雨後的街道<small>中二寫作　重溫步移法．定點描寫．直接、間接、比喻描寫</small></h1>
+    <div class="tools">
+      <button class="btn" id="bMode" type="button" aria-pressed="true">課堂模式：開</button>
+      <button class="btn" id="bNote" type="button">筆記簿</button>
+      <button class="btn" id="bCoach" type="button">AI 寫作教練</button>
+      <button class="btn" id="bSound" type="button" aria-pressed="false">聲音：關</button>
+      <button class="btn" id="bFull" type="button">全螢幕</button>
+    </div>
+  </header>
+
+  <div class="stage" id="stage">
+    <div class="loading" id="loading">正在佈置街道……</div>
+    <div class="hud" id="hud">
+      <div class="zone glass" id="zoneName">家門口</div>
+      <div class="route glass" id="route"><b>我的路線（步移法）</b></div>
+      <div class="count glass"><span id="cntLabel">已完成</span> <strong id="cnt">0</strong> / <span id="tot">8</span></div>
+    </div>
+    <div class="pad" id="pad" aria-label="方向鍵">
+      <span></span><button type="button" data-k="up" aria-label="向前">▲</button><span></span>
+      <button type="button" data-k="left" aria-label="向左">◀</button><span></span><button type="button" data-k="right" aria-label="向右">▶</button>
+      <span></span><button type="button" data-k="down" aria-label="向後">▼</button><span></span>
+    </div>
+    <div class="next glass" id="next" hidden></div>
+    <div class="hint glass" id="hint">拖曳畫面可轉換視角</div>
+    <button class="act" id="act" type="button">走近發亮的「！」</button>
+    <div class="toast glass" id="toast" style="opacity:0"></div>
+    <div class="fixedpanel glass" id="fixedPanel" hidden></div>
+
+    <div class="ov" id="ovStart">
+      <div class="card">
+        <div class="eyebrow">昨夜十號風球．今早風球除下</div>
+        <h2>你踏出家門，準備上學……</h2>
+        <p style="margin:0">街道已經面目全非。沿路觀察暴風雨留下的痕跡，收集描寫句子，走到學校門口。</p>
+        <ol class="steps-list">
+          <li>方向鍵或 WASD 行走；拖曳畫面轉換視角；也可直接點擊地面行走。</li>
+          <li>跟着地上的黃色箭咀，依次找出編號 <b style="color:var(--coat)">①至⑧</b>；編號就是紀錄表的行數。走近後按空格鍵或「查看」按鈕。</li>
+          <li>把例句抄在筆記上，寫出它用了直接、間接還是比喻描寫。答案最後才核對。</li>
+          <li>巴士站地上有一個黃色虛線圈「定點觀察點」，記得站上去。</li>
+        </ol>
+        <div class="row"><button class="btn primary" id="bStart" type="button" disabled>佈置中……</button></div>
+      </div>
+    </div>
+
+    <div class="ov" id="ovCard" hidden><div class="card" id="cardBody"></div></div>
+    <div class="ov" id="ovNote" hidden><div class="card" id="noteBody"></div></div>
+    <div class="ov" id="ovCoach" hidden><div class="card" id="coachBody"></div></div>
+    <div class="ov" id="ovEnd" hidden><div class="card" id="endBody"></div></div>
+  </div>
+
+  <section class="notes">
+    <h3>課堂用法：重溫五種寫作手法</h3>
+    <ol>
+      <li><b>步移法</b>：畫面頂部記下你走過的路線；到學校門口，路線就變成文章的段落次序。</li>
+      <li><b>定點描寫</b>：巴士站的黃色虛線圈是「定點觀察點」，站上去後鏡頭變成「我」的眼睛，只移動視線，由近至遠（或由遠至近）。</li>
+      <li><b>直接、間接、比喻描寫</b>：每樣景物都有一句例句，學生抄在筆記上，寫出它用了甚麼手法。</li>
+      <li>預設「課堂模式」只顯示紀錄表要寫的 ①至⑧，並有箭咀帶路；按「課堂模式」可切換為自由探索，顯示全部景物。</li>
+      <li>老師先投影示範第 ① 項，學生再自己玩；最後打開「筆記簿」按「核對答案」。</li>
+      <li>「AI 寫作教練」可即場評學生自己寫的句子。</li>
+    </ol>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+if(!window.THREE){$('loading').textContent='未能載入 3D 引擎，請檢查網絡後重新整理。';return}
+const T=THREE;
+const stage=$('stage');
+
+/* ================= DATA ================= */
+const ZONES=[
+  {id:'home',name:'家門口',x0:-20,x1:40},
+  {id:'bus',name:'巴士站',x0:40,x1:85},
+  {id:'market',name:'街市',x0:85,x1:135},
+  {id:'park',name:'公園',x0:135,x1:185},
+  {id:'school',name:'學校門口',x0:185,x1:260}
+];
+const METHODS=['直接描寫','間接描寫','比喻描寫'];
+const SPOTS=[
+ {id:'gate',zone:'home',x:6,z:-5.2,name:'濕漉漉的鐵閘',senses:{觸:'手一碰，冰冷的雨水沿着指縫流下。',聽:'鐵閘被風吹得「嘎嘎」作響。'},method:'直接描寫',sentence:'大廈的鐵閘濕漉漉的，被狂風吹得歪向一邊，鎖頭也鬆脫了。',why:'句子直接寫出鐵閘濕透、歪斜、鎖頭鬆脫的樣子。',words:['濕漉漉','歪向一邊']},
+ {id:'pots',n:1,zone:'home',x:14,z:-4.4,name:'東歪西倒的盆栽',senses:{視:'盆栽倒在地上，碎瓦片和泥土撒滿門口。',觸:'泥土又濕又軟，黏在鞋底。'},method:'直接描寫',sentence:'大廈門外的盆栽被吹得東歪西倒，碎盆和泥土散落一地。',why:'句子直接寫出盆栽倒下、碎裂的樣子。',words:['東歪西倒','散落一地']},
+ {id:'guard',n:2,zone:'home',x:25,z:-3.6,name:'掃地的管理員伯伯',senses:{視:'伯伯彎着腰，身旁的落葉已堆成小山。',聽:'掃帚在地上「沙沙」地響。'},method:'間接描寫',sentence:'管理員伯伯掃了一整個早上，身旁的落葉仍堆得像一座小山。',why:'沒有直接寫落葉有多少，而是通過伯伯掃不完來烘托。',words:['彎着腰','沙沙聲']},
+ {id:'sign',n:3,zone:'bus',x:55.5,z:-2.2,name:'歪斜的巴士站牌',senses:{視:'站牌歪向一邊，鐵柱底部的石屎裂開了。',聽:'站牌在風中「吱吱」搖晃。'},method:'比喻描寫',sentence:'巴士站牌歪向一邊，好像一個站不穩的醉漢。',why:'把站牌比作醉漢，因為兩者同樣搖搖晃晃、站不穩。',words:['歪向一邊','站不穩的醉漢']},
+ {id:'fixed',n:4,zone:'bus',x:59,z:-3.9,type:'fixed',name:'定點觀察點'},
+ {id:'riders',zone:'bus',x:70,z:-2.9,name:'跨過水窪的乘客',senses:{視:'乘客踮起腳尖，一步一步跨過水窪。',聽:'有人小聲抱怨：「成條街都浸咗水。」'},method:'間接描寫',sentence:'等車的乘客紛紛踮起腳尖跨過水窪，有的乾脆繞道而行。',why:'通過乘客小心翼翼的動作，烘托地上積水之多。',words:['踮起腳尖','繞道而行']},
+ {id:'canopy',zone:'market',x:96,z:-4.3,name:'被撕破的帆布篷',senses:{聽:'殘破的帆布在風中「啪啪」拍打。',視:'雨水從破洞一滴一滴落下。'},method:'比喻描寫',sentence:'被撕成一條條的帆布篷，像一面面投降的白旗，在風中無力地擺動。',why:'把破爛的帆布篷比作投降的白旗，因為兩者都是一條條在風中飄動，又顯得無力。',words:['一條條','投降的白旗']},
+ {id:'shopsign',n:5,zone:'market',x:110,z:-3.6,name:'搖搖欲墜的招牌',senses:{視:'招牌只剩一條鐵鏈吊着，在半空搖來搖去。',聽:'金屬互相摩擦，發出刺耳的聲音。'},method:'直接描寫',sentence:'一塊招牌只剩一條鐵鏈吊着，在半空中搖搖欲墜。',why:'句子直接寫出招牌搖晃、快要掉下的樣子。',words:['搖搖欲墜','岌岌可危']},
+ {id:'scraps',zone:'market',x:122,z:-2.6,name:'滿地爛菜葉',senses:{嗅:'泥土味混着魚腥味，撲鼻而來。',視:'菜葉、膠袋和發泡膠箱散滿一地。'},method:'間接描寫',sentence:'經過街市的路人都掩着鼻子，小心翼翼地繞過地上的爛菜葉。',why:'沒有直接寫地上有多髒、氣味有多難聞，而是通過路人掩鼻繞路來烘托。',words:['掩着鼻子','狼藉一片']},
+ {id:'vendors',zone:'market',x:130,z:-4.1,name:'合力扶貨架的檔主',senses:{視:'幾位檔主喊着口號，一起把倒下的貨架抬起。',聽:'「一、二、三，起！」'},method:'間接描寫',sentence:'幾位檔主要合力才能把倒下的貨架扶正，可見昨夜的風勢有多猛烈。',why:'通過檔主收拾的情況，烘托暴風雨的破壞力。',words:['齊心合力','風勢猛烈']},
+ {id:'carpet',zone:'park',x:141,z:-3.6,name:'落葉鋪成的地毯',senses:{觸:'踩上去軟綿綿的，鞋底沾滿濕葉。',嗅:'一陣濃烈的青草和泥土味。'},method:'比喻描寫',sentence:'小徑鋪滿厚厚的落葉，像一張又濕又軟的地毯。',why:'把滿地落葉比作地毯，因為兩者都厚厚地鋪在地上。',words:['軟綿綿','厚厚的地毯']},
+ {id:'tree',n:6,zone:'park',x:155,z:-1.5,name:'連根拔起的大樹',senses:{視:'大樹橫躺在路中央，樹根連着泥土翻了出來。',觸:'樹皮濕漉漉，粗糙得刮手。'},method:'比喻描寫',sentence:'一棵大樹被連根拔起，橫躺在路中央，像一個疲倦的巨人。',why:'把倒下的大樹比作疲倦的巨人，突出它的巨大和無力。',words:['連根拔起','疲倦的巨人']},
+ {id:'saw',n:7,zone:'park',x:166.5,z:-1.4,name:'鋸樹的工人',senses:{聽:'鏈鋸發出「嗚嗚」的巨響，震得耳朵發麻。',嗅:'空氣中有一股新鮮木屑的味道。'},method:'間接描寫',sentence:'兩位工人用鏈鋸鋸了整整一個早上，仍未把橫躺的樹幹鋸完。',why:'通過工人鋸了很久也鋸不完，烘托倒下的大樹有多巨大。',words:['嗚嗚巨響','整整一個早上']},
+ {id:'swing',zone:'park',x:178,z:-4.6,name:'纏滿斷枝的鞦韆',senses:{視:'鐵鏈纏滿斷枝，鞦韆歪歪斜斜地吊在半空。',聽:'鐵鏈偶爾「叮噹」一聲。'},method:'直接描寫',sentence:'鞦韆的鐵鏈纏滿斷枝，孤零零地吊在半空。',why:'句子直接寫出鞦韆被斷枝纏住的樣子。',words:['孤零零','纏滿斷枝']},
+ {id:'notice',zone:'school',x:195,z:-4.6,name:'七零八落的告示板',senses:{視:'通告紙被吹得七零八落，有的貼在牆上，有的泡在水裏。'},method:'直接描寫',sentence:'學校的告示板被吹得七零八落，通告紙散落一地。',why:'句子直接寫出告示板的破壞情況。',words:['七零八落','面目全非']},
+ {id:'janitor',zone:'school',x:207,z:-3.2,name:'推車的校工叔叔',senses:{視:'叔叔推着滿載斷枝的手推車，額上滿是汗珠。',聽:'車輪「咯咯」地輾過碎石。'},method:'間接描寫',sentence:'校工叔叔一大清早便推着滿載斷枝的手推車來回奔走，額上滿是汗珠。',why:'通過校工忙碌的樣子，烘托破壞嚴重，也寫出他默默付出。',words:['來回奔走','默默付出']},
+ {id:'finish',n:8,zone:'school',x:220,z:-4.4,type:'finish',name:'學校門口'}
+];
+const COUNTABLE=SPOTS.filter(s=>s.type!=='finish');
+const REQ=SPOTS.filter(s=>s.n).sort((a,b)=>a.n-b.n);
+const CIRC=['','①','②','③','④','⑤','⑥','⑦','⑧'];
+let classMode=true;
+const active=s=>!classMode||!!s.n;
+const PUDDLES=[{x:36,z:0.6,rx:2.2,rz:1.1},{x:59.4,z:-2.6,rx:1.3,rz:0.8},{x:66,z:-2.0,rx:2.4,rz:1.2},{x:76,z:2.0,rx:3,rz:1.4},{x:116,z:2.6,rx:2.2,rz:1},{x:190,z:1.0,rx:2.4,rz:1.1},{x:204,z:-2.4,rx:1.4,rz:0.8}];
+const BOXES=[ // obstacles x0,x1,z0,z1
+  {x0:147.6,x1:164.2,z0:-6.2,z1:-2.2},
+  {x0:61.5,x1:65.5,z0:-6.2,z1:-5.3},
+  {x0:88,x1:92,z0:-6.5,z1:-5.4},{x0:100,x1:104,z0:-6.5,z1:-5.4},{x0:114,x1:118,z0:-6.5,z1:-5.4},{x0:124,x1:128,z0:-6.5,z1:-5.4}
+];
+const FIX={eye:new T.Vector3(59,1.55,-3.9),
+  views:{start:new T.Vector3(60,1.3,6),near:new T.Vector3(59.4,0,-2.6),mid:new T.Vector3(55.5,2.4,-2.2),far:new T.Vector3(62.5,0.9,8.6)}};
+
+/* ================= RENDERER ================= */
+const renderer=new T.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.outputEncoding=T.sRGBEncoding;
+renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
+stage.insertBefore(renderer.domElement,stage.firstChild);
+const cv=renderer.domElement;cv.setAttribute('aria-label','暴風雨後的街道 3D 畫面');
+const scene=new T.Scene();
+const FOG=new T.Color('#9ba8ac');scene.fog=new T.FogExp2(FOG,0.022);
+const camera=new T.PerspectiveCamera(55,16/9,0.1,500);
+const maxAniso=renderer.capabilities.getMaxAnisotropy();
+function resize(){const r=stage.getBoundingClientRect();renderer.setSize(r.width,r.height,false);camera.aspect=r.width/Math.max(1,r.height);camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(stage);window.addEventListener('resize',resize);
+
+/* ================= HELPERS ================= */
+let seed=11;const rnd=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};
+const rr=(a,b)=>a+rnd()*(b-a);
+const FONT='"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
+const KAI='"LXGW WenKai TC","Kaiti TC",serif';
+function ctex(w,h,draw,o={}){
+  const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');draw(g,w,h);
+  const t=new T.CanvasTexture(c);if(o.srgb!==false)t.encoding=T.sRGBEncoding;t.anisotropy=maxAniso;
+  if(o.repeat){t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(o.repeat[0],o.repeat[1])}
+  return t;
+}
+function noise(g,w,h,a,n=4000,dark='0,0,0',light='255,255,255'){for(let i=0;i<n;i++){g.fillStyle=`rgba(${rnd()<.5?dark:light},${rnd()*a})`;g.fillRect(rnd()*w,rnd()*h,1+rnd()*3,1+rnd()*3)}}
+const MATS={};
+function M(color,rough=.8,metal=0,extra={}){const k=color+rough+metal+JSON.stringify(Object.keys(extra));if(!extra.map&&MATS[k])return MATS[k];
+  const m=new T.MeshStandardMaterial(Object.assign({color,roughness:rough,metalness:metal},extra));if(!extra.map)MATS[k]=m;return m}
+function mesh(geo,mat,x=0,y=0,z=0,parent=scene,shadow=true){const m=new T.Mesh(geo,mat);m.position.set(x,y,z);if(shadow){m.castShadow=true;m.receiveShadow=true}parent.add(m);return m}
+function label(text,{bg='#1d5f7a',fg='#fff',w=512,h=256,size=150,font=FONT,border,weight=900,vertical=false}={}){
+  return ctex(w,h,(g)=>{g.fillStyle=bg;g.fillRect(0,0,w,h);if(border){g.strokeStyle=border;g.lineWidth=10;g.strokeRect(14,14,w-28,h-28)}
+    g.fillStyle=fg;g.textAlign='center';g.textBaseline='middle';
+    if(vertical){const ch=[...text];const s=Math.min(size,h/(ch.length+.6));g.font=`${weight} ${s}px ${font}`;ch.forEach((c,i)=>g.fillText(c,w/2,(i+.8)*s+ (h-ch.length*s)/2 - s*.3))}
+    else{let s=size;g.font=`${weight} ${s}px ${font}`;while(g.measureText(text).width>w*.86&&s>20){s-=6;g.font=`${weight} ${s}px ${font}`}g.fillText(text,w/2,h/2+s*.04)}
+    noise(g,w,h,.08,1500)})
+}
+const actors=[];
+
+/* ================= SKY / LIGHT / ENV ================= */
+function skyMesh(top,mid,hor,r){
+  const geo=new T.SphereGeometry(r,32,16);const col=[],p=geo.attributes.position;const ct=new T.Color(top),cm=new T.Color(mid),ch=new T.Color(hor),tmp=new T.Color();
+  for(let i=0;i<p.count;i++){const y=p.getY(i)/r;if(y>0.25)tmp.copy(cm).lerp(ct,(y-.25)/.75);else tmp.copy(ch).lerp(cm,Math.max(0,(y+.1)/.35));col.push(tmp.r,tmp.g,tmp.b)}
+  geo.setAttribute('color',new T.Float32BufferAttribute(col,3));
+  return new T.Mesh(geo,new T.MeshBasicMaterial({vertexColors:true,side:T.BackSide,fog:false,depthWrite:false}));
+}
+const sky=skyMesh('#6f828b','#97a6ab','#b9c3c3',400);scene.add(sky);
+{const envScene=new T.Scene();envScene.add(skyMesh('#c9d3d6','#b4c0c3','#8f9a9c',50));
+ const pm=new T.PMREMGenerator(renderer);scene.environment=pm.fromScene(envScene,0.02).texture;pm.dispose()}
+const hemi=new T.HemisphereLight('#cfd9dc','#4b4f48',0.55);scene.add(hemi);
+const sun=new T.DirectionalLight('#eef3f4',1.0);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-26,right:26,top:26,bottom:-26,near:1,far:80});sun.shadow.bias=-0.0004;sun.shadow.normalBias=0.03;scene.add(sun);scene.add(sun.target);
+
+/* ================= BUILD WORLD (after fonts) ================= */
+let player,playerParts,markers=[],ringMesh,focusSprite,leafFly,rain,ripples=[],arrow;
+
+function build(){
+  // ---------- ground ----------
+  const asph=ctex(1024,1024,(g,w,h)=>{g.fillStyle='#43494d';g.fillRect(0,0,w,h);noise(g,w,h,.35,26000,'0,0,0','200,205,210');
+    for(let i=0;i<14;i++){g.strokeStyle='rgba(20,22,24,.5)';g.lineWidth=1+rnd()*2;g.beginPath();let x=rnd()*w,y=rnd()*h;g.moveTo(x,y);for(let k=0;k<8;k++){x+=rr(-40,40);y+=rr(-40,40);g.lineTo(x,y)}g.stroke()}
+    for(let i=0;i<10;i++){const gr=g.createRadialGradient(0,0,0,0,0,1);g.save();g.translate(rnd()*w,rnd()*h);g.scale(rr(60,180),rr(30,80));gr.addColorStop(0,'rgba(15,20,24,.35)');gr.addColorStop(1,'rgba(15,20,24,0)');g.fillStyle=gr;g.beginPath();g.arc(0,0,1,0,7);g.fill();g.restore()}
+  },{repeat:[24,1.2]});
+  const asphRough=ctex(512,512,(g,w,h)=>{g.fillStyle='#8a8a8a';g.fillRect(0,0,w,h);for(let i=0;i<16;i++){const gr=g.createRadialGradient(0,0,0,0,0,1);g.save();g.translate(rnd()*w,rnd()*h);g.scale(rr(30,120),rr(20,60));gr.addColorStop(0,'#1a1a1a');gr.addColorStop(1,'rgba(26,26,26,0)');g.fillStyle=gr;g.beginPath();g.arc(0,0,1,0,7);g.fill();g.restore()}noise(g,w,h,.3,6000)},{repeat:[24,1.2],srgb:false});
+  const road=mesh(new T.PlaneGeometry(280,9),M('#ffffff',1,0,{map:asph,roughnessMap:asphRough,envMapIntensity:1.1}),115,0,2.75,scene,false);road.rotation.x=-Math.PI/2;road.receiveShadow=true;
+  const pave=ctex(512,512,(g,w,h)=>{g.fillStyle='#9fa29b';g.fillRect(0,0,w,h);const n=8,s=w/n;for(let i=0;i<n;i++)for(let j=0;j<n;j++){const v=rr(-14,14);g.fillStyle=`rgb(${150+v},${154+v},${146+v})`;g.fillRect(i*s+2,j*s+2,s-4,s-4)}noise(g,w,h,.25,9000);g.fillStyle='rgba(60,70,72,.25)';for(let k=0;k<6;k++){g.beginPath();g.ellipse(rnd()*w,rnd()*h,rr(30,90),rr(15,40),0,0,7);g.fill()}},{repeat:[70,1.2]});
+  const paveRough=ctex(256,256,(g,w,h)=>{g.fillStyle='#b0b0b0';g.fillRect(0,0,w,h);g.fillStyle='#303030';for(let k=0;k<6;k++){g.beginPath();g.ellipse(rnd()*w,rnd()*h,rr(15,45),rr(8,20),0,0,7);g.fill()}},{repeat:[70,1.2],srgb:false});
+  const pm=M('#ffffff',.9,0,{map:pave,roughnessMap:paveRough});
+  const pN=mesh(new T.PlaneGeometry(280,5),pm,115,0.12,-4,scene,false);pN.rotation.x=-Math.PI/2;pN.receiveShadow=true;
+  const pS=mesh(new T.PlaneGeometry(280,4),pm.clone(),115,0.12,9.2,scene,false);pS.rotation.x=-Math.PI/2;pS.receiveShadow=true;pS.material.map=pave.clone();pS.material.map.needsUpdate=true;pS.material.map.repeat.set(70,1);
+  mesh(new T.BoxGeometry(280,0.18,0.25),M('#c9c6b8',.8),115,0.07,-1.5,scene,false).receiveShadow=true;
+  mesh(new T.BoxGeometry(280,0.18,0.25),M('#c9c6b8',.8),115,0.07,7.15,scene,false).receiveShadow=true;
+  const lineMat=M('#e6dca0',.6);for(let x=-20;x<250;x+=6){const l=mesh(new T.PlaneGeometry(3,0.15),lineMat,x,0.012,2.8,scene,false);l.rotation.x=-Math.PI/2;l.receiveShadow=true}
+  const yl=M('#d9b23a',.6);[0.0,0.25].forEach(o=>{const l=mesh(new T.PlaneGeometry(280,0.1),yl,115,0.013,-1.2+o,scene,false);l.rotation.x=-Math.PI/2});
+  const back=mesh(new T.PlaneGeometry(600,600),M('#5b625e',1),115,-0.02,0,scene,false);back.rotation.x=-Math.PI/2;back.receiveShadow=true;
+
+  // ---------- puddles ----------
+  const pudMat=new T.MeshStandardMaterial({color:'#3e4c53',roughness:0.03,metalness:0.85,envMapIntensity:1.4,transparent:true,opacity:.92});
+  for(const p of PUDDLES){const m=mesh(new T.CircleGeometry(1,40),pudMat,p.x,p.z<-1.5?0.135:0.02,p.z,scene,false);m.rotation.x=-Math.PI/2;m.scale.set(p.rx,p.rz,1);m.receiveShadow=true;
+    for(let k=0;k<3;k++){const r=new T.Mesh(new T.RingGeometry(.9,1,32),new T.MeshBasicMaterial({color:'#e3ecee',transparent:true,opacity:0,depthWrite:false}));r.rotation.x=-Math.PI/2;r.position.set(p.x+rr(-p.rx*.5,p.rx*.5),m.position.y+.005,p.z+rr(-p.rz*.4,p.rz*.4));scene.add(r);ripples.push({m:r,t:rnd()*2,s:rr(.25,.5)})}}
+
+  // ---------- facades ----------
+  const facades=[['#9aa4a6','#5b6c74'],['#b9ae9a','#5a6670'],['#8f9c95','#4f6068'],['#c4bfb4','#56656e'],['#a49184','#4e5d66'],['#7f8d93','#3f4f58']].map(([wall,glass],vi)=>ctex(512,512,(g,w,h)=>{
+    g.fillStyle=wall;g.fillRect(0,0,w,h);noise(g,w,h,.18,9000);
+    for(let i=0;i<16;i++){g.fillStyle='rgba(40,40,40,.08)';g.fillRect(rnd()*w,0,rr(2,8),h)}
+    const cols=4,rows=4,cw=w/cols,rh=h/rows;
+    for(let c=0;c<cols;c++)for(let r=0;r<rows;r++){const x=c*cw+cw*.18,y=r*rh+rh*.18,ww=cw*.64,hh=rh*.5;
+      g.fillStyle='#d8d8d0';g.fillRect(x-4,y-4,ww+8,hh+8);
+      const gr=g.createLinearGradient(x,y,x+ww,y+hh);gr.addColorStop(0,glass);gr.addColorStop(.5,'#8ea2aa');gr.addColorStop(1,glass);g.fillStyle=gr;g.fillRect(x,y,ww,hh);
+      g.fillStyle='rgba(230,230,220,.5)';g.fillRect(x+ww/2-1,y,2,hh);
+      if(rnd()<.18){g.strokeStyle='rgba(240,230,190,.9)';g.lineWidth=5;g.beginPath();g.moveTo(x+4,y+4);g.lineTo(x+ww-4,y+hh-4);g.moveTo(x+ww-4,y+4);g.lineTo(x+4,y+hh-4);g.stroke()}
+      if(rnd()<.08){g.fillStyle='#222a2e';g.beginPath();g.moveTo(x+ww*.3,y);g.lineTo(x+ww*.7,y+hh*.6);g.lineTo(x+ww*.2,y+hh);g.fill()}
+      if(rnd()<.45){g.fillStyle='#d9d9d2';g.fillRect(x+ww*.15,y+hh+10,ww*.5,rh*.18);g.fillStyle='#9aa';g.fillRect(x+ww*.2,y+hh+14,ww*.4,4)}
+      g.fillStyle='rgba(50,55,55,.25)';g.fillRect(x,y+hh+4,ww,3)}
+    for(let i=0;i<5;i++){g.fillStyle='rgba(30,35,35,.18)';g.fillRect(rnd()*w,rnd()*h*.6,rr(3,10),rr(60,200))}
+  }));
+  const SHOPS=['茶餐廳','藥房','地產','五金','士多','文具','髮型屋','涼茶','雜貨','眼鏡','補習社','麵家','海味','電器','燒臘'];
+  const shopCol=['#a8322b','#1f5f8a','#2f6e4a','#8a5a1f','#5b2f7a','#b5562a','#246f73'];
+  function shopTex(name,col,shut){return ctex(1024,512,(g,w,h)=>{
+    g.fillStyle='#2c3236';g.fillRect(0,0,w,h);
+    g.fillStyle=col;g.fillRect(0,0,w,h*.32);g.fillStyle='rgba(255,255,255,.08)';g.fillRect(0,0,w,h*.04);
+    g.fillStyle='#fff6d8';g.font=`900 120px ${FONT}`;g.textAlign='center';g.textBaseline='middle';g.fillText(name,w/2,h*.17);
+    if(shut){for(let y=h*.34;y<h;y+=12){g.fillStyle=y%24<12?'#9aa2a6':'#868e92';g.fillRect(w*.04,y,w*.92,12)}g.fillStyle='rgba(40,40,40,.25)';g.fillRect(w*.04,h*.34,w*.92,6)}
+    else{const gr=g.createLinearGradient(0,h*.34,w,h);gr.addColorStop(0,'#3c4a50');gr.addColorStop(.5,'#7a8c92');gr.addColorStop(1,'#33424a');g.fillStyle=gr;g.fillRect(w*.04,h*.36,w*.92,h*.6);
+      g.fillStyle='#c9c4b0';for(let i=0;i<4;i++)g.fillRect(w*.04+i*w*.23,h*.36,6,h*.6);g.fillStyle='rgba(255,240,200,.35)';g.fillRect(w*.1,h*.5,w*.25,h*.25)}
+    noise(g,w,h,.15,5000)})}
+  function building(x,w,h,d,side,fi,shop,shut,body){
+    const z=side<0?-6.6-d/2:10.9+d/2;const tex=facades[fi%facades.length].clone();tex.needsUpdate=true;tex.wrapS=tex.wrapT=T.RepeatWrapping;tex.repeat.set(w/8,h/8);
+    const b=mesh(new T.BoxGeometry(w,h,d),M('#ffffff',.85,0,{map:tex,color:body||'#ffffff'}),x,h/2,z);b.castShadow=false;
+    const roof=mesh(new T.BoxGeometry(w+.3,.4,d+.3),M('#5c6264',.9),x,h+.2,z);roof.castShadow=false;
+    if(shop){const st=shopTex(shop,shopCol[Math.abs(fi+Math.round(x))%shopCol.length],shut);const fz=side<0?-6.55:10.85;
+      const sp=mesh(new T.PlaneGeometry(w-.4,4.2),M('#ffffff',.6,0,{map:st}),x,2.1,fz+(side<0?0:0),scene,false);if(side>0)sp.rotation.y=Math.PI;
+      const awn=mesh(new T.BoxGeometry(w-.2,.15,1.2),M('#6d7476',.7,.3),x,4.25,fz+(side<0?.6:-.6));awn.castShadow=true}
+  }
+  // north side
+  let fi=0;
+  building(4,22,34,12,-1,0,null,false);
+  for(let x=17;x<85;){const w=rr(10,15);building(x+w/2,w,rr(18,36),12,-1,++fi,SHOPS[fi%SHOPS.length],rnd()<.4);x+=w+.1}
+  building(110,50,22,14,-1,3,null,false,'#d8d4c8');
+  for(let x=-30;x<250;){const w=rr(10,16);building(x+w/2,w,rr(20,42),12,1,++fi+2,SHOPS[(fi+5)%SHOPS.length],rnd()<.45);x+=w+.1}
+  building(-26,12,30,12,-1,4,'士多',true);
+  // home entrance + gate
+  const hn=mesh(new T.PlaneGeometry(6,1.1),M('#ffffff',.6,0,{map:label('海景大廈',{bg:'#d9d2b4',fg:'#2d3a3c',font:KAI,w:768,h:160,size:120,weight:700})}),6,3.8,-6.5,scene,false);
+  mesh(new T.BoxGeometry(5.4,3.3,.6),M('#2b3337',.8),6,1.65,-6.75,scene,false);
+  const gate=new T.Group();gate.position.set(6,0,-6.35);gate.rotation.y=0.22;scene.add(gate);
+  const bar=new T.CylinderGeometry(.025,.025,3,6),steel=M('#9aa4a8',.35,.8);
+  for(let i=0;i<22;i++)mesh(bar,steel,-2.5+i*.24,1.6,0,gate);
+  [0.25,1.6,3.05].forEach(y=>{const r=mesh(new T.BoxGeometry(5.2,.06,.06),steel,0,y,0,gate)});
+  // home ground-floor shops near gate
+  // ---------- school ----------
+  const schoolTex=facades[3].clone();schoolTex.needsUpdate=true;schoolTex.wrapS=schoolTex.wrapT=T.RepeatWrapping;schoolTex.repeat.set(5,2);
+  mesh(new T.BoxGeometry(40,16,14),M('#ffffff',.85,0,{map:schoolTex,color:'#f2e6c8'}),205,8,-15).castShadow=false;
+  const wallM=M('#d9cfb3',.9);mesh(new T.BoxGeometry(28,2.2,.35),wallM,201,1.1,-6.5);mesh(new T.BoxGeometry(10,2.2,.35),wallM,230,1.1,-6.5);
+  const brick=M('#7c3b33',.85);mesh(new T.BoxGeometry(1,4,1),brick,215.5,2,-6.4);mesh(new T.BoxGeometry(1,4,1),brick,224.5,2,-6.4);
+  mesh(new T.PlaneGeometry(8,1.3),M('#ffffff',.6,0,{map:label('學　校',{bg:'#f0e8d0',fg:'#6a2a24',font:KAI,w:1024,h:180,size:130,weight:700})}),220,4.4,-5.85,scene,false);
+  mesh(new T.BoxGeometry(9.2,.3,.6),brick,220,3.75,-6.4);
+  for(let i=0;i<30;i++)mesh(new T.CylinderGeometry(.03,.03,2.6,6),M('#3d4448',.4,.7),216.2+i*.27,1.3,-6.6);
+  // ---------- park ----------
+  const parkGround=mesh(new T.PlaneGeometry(50,14),M('#4f6a45',1),160,0.05,-13.5,scene,false);parkGround.rotation.x=-Math.PI/2;parkGround.receiveShadow=true;
+  const fence=M('#2e3d36',.5,.5);for(let x=135.5;x<185;x+=0.35){if(x>147&&x<165&&Math.abs(x-150)<2)continue;mesh(new T.CylinderGeometry(.018,.018,1.1,5),fence,x,0.67,-6.3,scene,false)}
+  mesh(new T.BoxGeometry(50,.05,.05),fence,160,1.2,-6.3,scene,false);mesh(new T.BoxGeometry(50,.05,.05),fence,160,.35,-6.3,scene,false);
+  const parkSign=mesh(new T.PlaneGeometry(3.4,1),M('#ffffff',.6,0,{map:label('公園',{bg:'#2f5a3a',fg:'#f2efd8',font:KAI,w:512,h:150,size:110,weight:700})}),137,2.3,-6.2,scene,false);
+  mesh(new T.CylinderGeometry(.06,.06,2.4,8),fence,135.5,1.2,-6.2);mesh(new T.CylinderGeometry(.06,.06,2.4,8),fence,138.5,1.2,-6.2);
+  // market big sign
+  mesh(new T.PlaneGeometry(12,2.4),M('#ffffff',.6,0,{map:label('街　市',{bg:'#7a2a24',fg:'#f6e7c0',font:KAI,w:1024,h:200,size:150,weight:700})}),110,8.5,-6.55,scene,false);
+
+  // ---------- street furniture ----------
+  const pole=M('#59636a',.45,.7);
+  for(let x=-10;x<240;x+=18){if(x>146&&x<166)continue;const lean=(Math.abs(x-70)<2||Math.abs(x-188)<2)?.18:0;
+    const g=new T.Group();g.position.set(x,0,-1.1);g.rotation.x=lean;scene.add(g);
+    mesh(new T.CylinderGeometry(.08,.12,7.5,10),pole,0,3.75,0,g);mesh(new T.BoxGeometry(.2,.12,1.6),pole,0,7.4,.7,g);mesh(new T.BoxGeometry(.35,.12,.6),M('#e8e4d0',.3,0,{emissive:'#504a30'}),0,7.32,1.35,g)}
+  for(let x=-14;x<240;x+=2.5){if((x>44&&x<80)||(x>146&&x<166))continue;const bent=rnd()<.06;
+    const g=new T.Group();g.position.set(x,0.12,-1.35);if(bent)g.rotation.z=rr(-.5,.5);scene.add(g);
+    mesh(new T.BoxGeometry(2.4,.06,.06),M('#a8afb2',.4,.6),0,1.0,0,g);mesh(new T.BoxGeometry(.06,1,.06),M('#a8afb2',.4,.6),-1.2,.5,0,g)}
+  // toppled bins
+  [[33,-2.4,.2],[86,-2.2,1.2],[188,-2.6,2.4]].forEach(([x,z,r])=>{const b=mesh(new T.CylinderGeometry(.32,.28,.9,14),M('#2f6b4a',.5,.2),x,.42,z);b.rotation.z=Math.PI/2;b.rotation.y=r;
+    for(let i=0;i<6;i++){const p=mesh(new T.PlaneGeometry(.2,.25),M('#e8e4d8',.9,0,{side:T.DoubleSide}),x+rr(-1.5,1.5),.14,z+rr(-.8,.8),scene,false);p.rotation.x=-Math.PI/2;p.rotation.z=rnd()*6}});
+  // fallen branches
+  const bark=ctex(256,512,(g,w,h)=>{g.fillStyle='#5a4430';g.fillRect(0,0,w,h);for(let i=0;i<80;i++){g.strokeStyle=`rgba(${rnd()<.5?'30,20,12':'120,100,80'},${rr(.2,.5)})`;g.lineWidth=rr(1,4);g.beginPath();const x=rnd()*w;g.moveTo(x,0);g.bezierCurveTo(x+rr(-10,10),h/3,x+rr(-10,10),h*2/3,x+rr(-8,8),h);g.stroke()}noise(g,w,h,.3,4000)},{repeat:[2,3]});
+  const barkM=M('#ffffff',.95,0,{map:bark});
+  const leafCols=['#4e6e36','#5d7a3e','#3f5f30','#71803a','#8a7a3a','#6c8a42'];
+  const leafMats=leafCols.map(c=>M(c,.75,0,{flatShading:true}));
+  function crown(parent,x,y,z,r,n){for(let i=0;i<n;i++){const s=r*rr(.45,.85);const m=mesh(new T.IcosahedronGeometry(s,1),leafMats[i%leafMats.length],x+rr(-r,r),y+rr(-r*.4,r*.5),z+rr(-r*.7,r*.7),parent);m.scale.y=rr(.6,.9);m.rotation.set(rnd()*3,rnd()*3,0)}}
+  function branch(x,z,len,rot){const g=new T.Group();g.position.set(x,.2,z);g.rotation.y=rot;scene.add(g);const b=mesh(new T.CylinderGeometry(.04,.09,len,6),barkM,0,0,0,g);b.rotation.z=Math.PI/2;crown(g,len*.35,.15,0,.45,4);return g}
+  [[19,-2.6,2.2,.4],[45,1.5,3,1.2],[81,-3.4,2.4,2.2],[128,1.2,2.6,.3],[172,0.8,3.2,1.9],[199,-1.9,2,.9],[212,1.5,2.4,2.8]].forEach(a=>branch(...a));
+
+  // ---------- leaves on ground ----------
+  const leafGeo=new T.PlaneGeometry(.14,.09);const leafM=new T.MeshStandardMaterial({roughness:.6,side:T.DoubleSide,envMapIntensity:.8});
+  const N=5200;const leaves=new T.InstancedMesh(leafGeo,leafM,N);leaves.receiveShadow=true;const dm=new T.Object3D(),col=new T.Color();let k=0;
+  function putLeaf(x,z,y=0.14){if(k>=N)return;dm.position.set(x,y+rnd()*.02,z);dm.rotation.set(-Math.PI/2+rr(-.3,.3),0,rnd()*6.28);const s=rr(.7,1.6);dm.scale.set(s,s,s);dm.updateMatrix();leaves.setMatrixAt(k,dm.matrix);col.set(leafCols[(rnd()*leafCols.length)|0]).multiplyScalar(rr(.7,1.1));leaves.setColorAt(k,col);k++}
+  for(let i=0;i<2600;i++){const x=rr(-15,235),z=rr(-6,9.8);putLeaf(x,z,z<-1.5||z>7.1?0.14:0.03)}
+  for(let i=0;i<1300;i++)putLeaf(rr(136,147),rr(-6,-2),0.14);
+  for(let i=0;i<500;i++)putLeaf(rr(145,170),rr(-6,1),0.14);
+  while(k<N)putLeaf(rr(20,30),rr(-5.5,-2.5),0.14);
+  leaves.instanceMatrix.needsUpdate=true;if(leaves.instanceColor)leaves.instanceColor.needsUpdate=true;scene.add(leaves);
+
+  // ---------- people ----------
+  function person(o){
+    const g=new T.Group();const skin=M(o.skin||'#d9a982',.7),shirt=M(o.shirt,.85),pants=M(o.pants||'#2f3b45',.9);
+    const hip=new T.Group();hip.position.y=.92;g.add(hip);
+    const legs=[-1,1].map(s=>{const p=new T.Group();p.position.set(.1*s,0,0);hip.add(p);mesh(new T.CylinderGeometry(.075,.065,.88,8),pants,0,-.44,0,p);mesh(new T.BoxGeometry(.13,.08,.26),M('#1d1d1d',.6),0,-.88,.05,p);return p});
+    const torso=new T.Group();hip.add(torso);
+    mesh(new T.CylinderGeometry(.19,.22,.62,10),shirt,0,.31,0,torso);
+    if(o.vest){mesh(new T.CylinderGeometry(.2,.23,.5,10),M('#ff7a1a',.7),0,.33,0,torso);mesh(new T.CylinderGeometry(.205,.235,.06,10),M('#f4f0c8',.3),0,.36,0,torso)}
+    const head=new T.Group();head.position.y=.78;torso.add(head);
+    mesh(new T.CylinderGeometry(.05,.06,.1,8),skin,0,-.1,0,head);mesh(new T.SphereGeometry(.13,16,12),skin,0,.05,0,head);
+    const hair=mesh(new T.SphereGeometry(.135,16,12,0,Math.PI*2,0,Math.PI*.55),M(o.hair||'#241d1a',.9),0,.07,-.01,head);
+    if(o.cap){mesh(new T.CylinderGeometry(.14,.14,.07,14),M(o.cap,.7),0,.15,0,head);mesh(new T.BoxGeometry(.2,.02,.12),M(o.cap,.7),0,.12,.14,head)}
+    const arms=[-1,1].map(s=>{const p=new T.Group();p.position.set(.25*s,.56,0);torso.add(p);mesh(new T.CylinderGeometry(.055,.045,.6,8),shirt,0,-.3,0,p);mesh(new T.SphereGeometry(.05,8,6),skin,0,-.62,0,p);return p});
+    g.traverse(m=>{if(m.isMesh){m.castShadow=true}});
+    return {g,hip,legs,torso,head,arms};
+  }
+  function place(p,x,z,ry){p.g.position.set(x,0.12,z);p.g.rotation.y=ry;scene.add(p.g);return p}
+
+  // guard sweeping + leaf pile
+  {const p=place(person({shirt:'#3b5b8a',pants:'#2a2f38',hair:'#cfcfcf',cap:'#26364d'}),25,-3.6,-Math.PI/2+.4);
+   const broom=new T.Group();p.arms[1].add(broom);broom.position.set(0,-.62,0);mesh(new T.CylinderGeometry(.018,.018,1.3,6),M('#8a6a3c',.7),0,-.4,.15,broom).rotation.x=.5;mesh(new T.BoxGeometry(.32,.12,.08),M('#c9a35a',.9),0,-.98,.42,broom);
+   p.torso.rotation.x=.35;
+   actors.push(t=>{p.arms[1].rotation.x=-.6+Math.sin(t*3.2)*.5;p.arms[0].rotation.x=-.4+Math.sin(t*3.2)*.4});
+   const pile=mesh(new T.SphereGeometry(.7,14,10),M('#5f7a3a',.9,0,{flatShading:true}),25.9,.1,-3.1);pile.scale.set(1,.45,.8)}
+  // riders tiptoe
+  [[69.4,-3.1,-Math.PI/2,'#7d4a8a','#2a2220'],[71,-2.5,Math.PI/2-.3,'#4a7a6a','#5a3a2a']].forEach(([x,z,r,sh,hr],i)=>{const p=place(person({shirt:sh,hair:hr}),x,z,r);
+    actors.push(t=>{const l=.06+Math.abs(Math.sin(t*2+i))*.05;p.g.position.y=.12+l;p.legs[0].rotation.x=Math.sin(t*2+i)*.5;p.arms[0].rotation.z=-.5;p.arms[1].rotation.z=.5})});
+  // vendors lifting shelf
+  {const shelf=new T.Group();shelf.position.set(130,0.12,-4.6);scene.add(shelf);const wood=M('#8a6a40',.8);
+   [[0,.05],[0,.7],[0,1.35]].forEach(([x,y])=>mesh(new T.BoxGeometry(2,.05,.5),wood,0,y,0,shelf));[-1,1].forEach(s=>mesh(new T.BoxGeometry(.06,1.5,.5),wood,s,.7,0,shelf));
+   actors.push(t=>{shelf.rotation.z=-.7+Math.sin(t*.8)*.08;shelf.position.y=.4});
+   const a=place(person({shirt:'#c9c2a2',hair:'#3a3a3a'}),128.6,-4,0.3),b=place(person({shirt:'#4b6d8a'}),131.5,-4,-.3);
+   [a,b].forEach(p=>{p.arms[0].rotation.x=-2.2;p.arms[1].rotation.x=-2.2;p.torso.rotation.x=.15})}
+  // scraps
+  {for(let i=0;i<40;i++){const m=mesh(new T.SphereGeometry(rr(.05,.1),6,4),leafMats[i%3],122+rr(-1.6,1.6),.15,-2.6+rr(-1,1));m.scale.y=.35}
+   [[123,-3.2,.2],[121.2,-2.1,1]].forEach(([x,z,r])=>{const b=mesh(new T.BoxGeometry(.6,.3,.4),M('#f0f0ea',.9),x,.27,z);b.rotation.y=r;b.rotation.z=.3});
+   const walker=place(person({shirt:'#a06a3a',hair:'#3a2a20'}),121,-1.9,Math.PI/2);walker.arms[1].rotation.x=-2.5;walker.arms[1].rotation.z=.3;
+   actors.push(t=>{const ph=(t*.25)%1;walker.g.position.x=118+ph*8;walker.legs[0].rotation.x=Math.sin(t*6)*.5;walker.legs[1].rotation.x=-Math.sin(t*6)*.5})}
+  // workers with chainsaw
+  {const w1=place(person({shirt:'#3a4a3a',vest:true,cap:'#f2d23a'}),166.5,-1.6,-Math.PI/2-.5),w2=place(person({shirt:'#3a3a4a',vest:true,cap:'#f2d23a'}),165,-0.5,-Math.PI/2-1.2);
+   const saw=new T.Group();w1.arms[1].add(saw);saw.position.set(0,-.6,.1);mesh(new T.BoxGeometry(.2,.18,.35),M('#d23b2a',.5),0,0,0,saw);mesh(new T.BoxGeometry(.03,.08,.6),M('#9aa3a8',.3,.8),0,0,.45,saw);
+   w1.arms[1].rotation.x=-1.1;w1.arms[0].rotation.x=-1.1;w2.arms[0].rotation.x=-.8;
+   actors.push(t=>{saw.position.y=-.6+Math.sin(t*40)*.01});
+   const dust=new T.BufferGeometry();const dp=new Float32Array(90*3);dust.setAttribute('position',new T.BufferAttribute(dp,3));
+   const dustP=new T.Points(dust,new T.PointsMaterial({color:'#d6b47a',size:.05,transparent:true,opacity:.85}));scene.add(dustP);
+   const dv=[];for(let i=0;i<90;i++)dv.push({t:rnd()});
+   actors.push((t,dt)=>{for(let i=0;i<90;i++){const d=dv[i];d.t+=dt*1.2;if(d.t>1)d.t=0;dp[i*3]=165.6-d.t*1.2+Math.sin(i)*.2;dp[i*3+1]=1.0+d.t*.6-d.t*d.t*1.4;dp[i*3+2]=-2.0+Math.cos(i*1.3)*d.t*.5}dust.attributes.position.needsUpdate=true})}
+  // janitor + cart
+  {const p=place(person({shirt:'#6a8a5a',cap:'#2a3a2a'}),207,-3.2,Math.PI/2);p.arms[0].rotation.x=-1.1;p.arms[1].rotation.x=-1.1;p.torso.rotation.x=.2;
+   const cart=new T.Group();cart.position.set(208.2,0.12,-3.2);scene.add(cart);mesh(new T.BoxGeometry(1.2,.5,.7),M('#3a5a8a',.5,.3),0,.55,0,cart);
+   [-1,1].forEach(s=>{const w=mesh(new T.CylinderGeometry(.16,.16,.08,14),M('#202020',.8),-.3,.16,.35*s,cart);w.rotation.x=Math.PI/2});
+   for(let i=0;i<5;i++){const b=mesh(new T.CylinderGeometry(.03,.05,1.4,6),barkM,rr(-.4,.4),1,rr(-.2,.2),cart);b.rotation.z=rr(.6,1.2)}crown(cart,.3,1.2,0,.35,4)}
+
+  // ---------- pots ----------
+  {const terra=M('#b5653d',.85),soil=M('#3b2c20',1);
+   [[12.6,-5.2,1.4,.3],[13.6,-4.6,0,0],[14.6,-5,1.5,1.2],[15.5,-4.2,1.2,2.4],[13.2,-3.9,1.6,.8]].forEach(([x,z,tilt,ry])=>{
+    const g=new T.Group();g.position.set(x,.12,z);g.rotation.y=ry;scene.add(g);const pot=new T.Group();pot.rotation.z=tilt;pot.position.y=tilt?.2:0;g.add(pot);
+    mesh(new T.CylinderGeometry(.24,.17,.42,14,1,true),terra,0,.21,0,pot).material.side=T.DoubleSide;crown(pot,0,.5,0,.22,3);
+    if(tilt){const s=mesh(new T.CircleGeometry(.5,16),soil,.5,.015,0,g,false);s.rotation.x=-Math.PI/2;s.scale.set(1.3,.7,1);s.receiveShadow=true}});
+   for(let i=0;i<14;i++){const sh=mesh(new T.BoxGeometry(rr(.06,.14),.025,rr(.05,.12)),terra,rr(12,16),.14,rr(-5.4,-3.6));sh.rotation.y=rnd()*3}}
+
+  // ---------- bus stop ----------
+  {const steel2=M('#5a7680',.4,.6);
+   [[61.6,-5.5],[65.4,-5.5]].forEach(([x,z])=>mesh(new T.CylinderGeometry(.05,.05,2.6,8),steel2,x,1.42,z));
+   const roof=mesh(new T.BoxGeometry(4.4,.08,1.6),M('#7f9aa3',.3,.2,{transparent:true,opacity:.85}),63.5,2.75,-5.4);roof.rotation.z=-.12;roof.rotation.x=.08;
+   mesh(new T.BoxGeometry(3,.08,.4),M('#8a6a4a',.7),63.5,.62,-5.75);
+   const sg=new T.Group();sg.position.set(55.5,0.12,-2.2);sg.rotation.z=.36;sg.rotation.x=-.1;scene.add(sg);
+   mesh(new T.CylinderGeometry(.05,.06,3,10),M('#aab4b8',.35,.7),0,1.5,0,sg);
+   const plate=mesh(new T.BoxGeometry(.06,.7,1.1),M('#ffffff',.5,0,{map:label('巴士站',{bg:'#c8342c',fg:'#fff',w:512,h:320,size:130})}),0,2.85,0,sg);plate.rotation.y=Math.PI/2;
+   const num=mesh(new T.BoxGeometry(.05,.5,.9),M('#ffffff',.5,0,{map:label('58M　67X',{bg:'#f3f0e4',fg:'#c8342c',w:512,h:256,size:90})}),0,2.25,0,sg);num.rotation.y=Math.PI/2;
+   const crack=mesh(new T.CircleGeometry(.5,12),M('#3a3f40',1),55.5,.13,-2.2,scene,false);crack.rotation.x=-Math.PI/2;
+   actors.push(t=>{sg.rotation.z=.36+Math.sin(t*2.4)*.012})}
+  // far fallen tree opposite bus stop (for fixed view)
+  fallenTree(57,8.8,9,0.25,0.38,false);
+  {const w=place(person({shirt:'#3a4a3a',vest:true,cap:'#f2d23a'}),66.8,8.4,-Math.PI/2);w.arms[1].rotation.x=-1.1;w.arms[0].rotation.x=-1.1;
+   const w2=place(person({shirt:'#4a3a3a',vest:true,cap:'#f2d23a'}),63,9.6,Math.PI);w2.arms[0].rotation.x=-.6}
+  // ---------- market stalls ----------
+  {const stripe=(a,b)=>ctex(256,256,(g,w,h)=>{for(let i=0;i<8;i++){g.fillStyle=i%2?a:b;g.fillRect(i*w/8,0,w/8,h)}noise(g,w,h,.2,3000)});
+   const cols=[['#efe8d8','#b5413a'],['#efe8d8','#2f6f9a'],['#efe8d8','#2f7a4a'],['#efe8d8','#b5413a']];
+   [90,102,116,126].forEach((x,i)=>{const sm=M('#5a5f62',.5,.6);
+     [[-1.9,-6.2],[1.9,-6.2],[-1.9,-4.9],[1.9,-4.9]].forEach(([dx,z])=>mesh(new T.CylinderGeometry(.03,.03,2.6,6),sm,x+dx,1.42,z));
+     mesh(new T.BoxGeometry(3.8,.9,1),M('#6a5a44',.8),x,.57,-5.85);
+     for(let c=0;c<5;c++){const cr=mesh(new T.BoxGeometry(.5,.25,.35),M(c%2?'#3a7ab0':'#d0c8b0',.7),x-1.4+c*.7,1.15,-5.8);cr.rotation.y=rr(-.2,.2)}
+     const tex=stripe(...cols[i]);
+     const can=mesh(new T.PlaneGeometry(4.4,1.8),M('#ffffff',.85,0,{map:tex,side:T.DoubleSide}),x,2.75,-5.4);can.rotation.x=-Math.PI/2+.35;if(i===2){can.rotation.z=.25;can.position.y=2.6}
+   });
+   // torn canopy stall at x=96 (spot)
+   const tx=96;const sm=M('#5a5f62',.5,.6);[[-1.9,-6.2],[1.9,-6.2],[-1.9,-4.9],[1.9,-4.9]].forEach(([dx,z])=>mesh(new T.CylinderGeometry(.03,.03,2.6,6),sm,tx+dx,1.42,z));
+   mesh(new T.BoxGeometry(3.8,.9,1),M('#6a5a44',.8),tx,.57,-5.85);
+   mesh(new T.BoxGeometry(3.9,.04,.04),sm,tx,2.72,-4.9);
+   const sTex=stripe('#efe8d8','#2f6f9a');
+   for(let i=0;i<9;i++){const g=new T.Group();g.position.set(tx-1.8+i*.45,2.72,-4.9);scene.add(g);
+     const len=rr(.8,1.7);const strip=mesh(new T.PlaneGeometry(.36,len),M('#ffffff',.85,0,{map:sTex,side:T.DoubleSide}),0,-len/2,0,g);
+     const ph=rnd()*6;actors.push(t=>{g.rotation.x=.5+Math.sin(t*5+ph)*.35;g.rotation.z=Math.sin(t*3.3+ph)*.12})}
+   // hanging sign swinging
+   const hs=new T.Group();hs.position.set(110,4.4,-3.6);scene.add(hs);
+   mesh(new T.CylinderGeometry(.04,.04,3,6),M('#555',.5,.7),109.4,4.6,-4.9,scene).rotation.x=Math.PI/2;
+   hs.position.set(110,4.6,-3.4);
+   const chain=mesh(new T.CylinderGeometry(.012,.012,.6,4),M('#888',.4,.8),-.6,-.3,0,hs);
+   const signB=new T.Group();signB.position.set(-.6,-.6,0);hs.add(signB);
+   mesh(new T.BoxGeometry(1.8,.8,.08),M('#ffffff',.5,0,{map:label('海鮮',{bg:'#1d5f7a',fg:'#f2d36b',border:'#f2d36b',font:KAI,weight:700,size:140})}),.9,-.4,0,signB);
+   actors.push(t=>{signB.rotation.z=-.55+Math.sin(t*2.2)*.22;signB.rotation.x=Math.sin(t*1.7)*.08})}
+  // ---------- park trees ----------
+  for(let x=140;x<184;x+=6.5){const g=new T.Group();g.position.set(x+rr(-1,1),0.05,-9.5+rr(-1.5,1.5));scene.add(g);
+    mesh(new T.CylinderGeometry(.18,.3,4,8),barkM,0,2,0,g);crown(g,0,4.5,0,1.6,9);const ph=rnd()*6;actors.push(t=>{g.rotation.z=Math.sin(t*1.3+ph)*.02})}
+  fallenTree(148,-3.9,15,0.42,0.6,true);
+  // leaf carpet extra dense: done above. swing
+  {const sw=new T.Group();sw.position.set(178,0.12,-5);scene.add(sw);const fm=M('#4a5a66',.5,.6);
+   [[-1.3,-.4],[-1.3,.4],[1.3,-.4],[1.3,.4]].forEach(([x,z])=>{const l=mesh(new T.CylinderGeometry(.05,.05,2.7,8),fm,x,1.3,z*.0,sw);l.rotation.x=z*.35});
+   mesh(new T.CylinderGeometry(.05,.05,2.8,8),fm,0,2.6,0,sw).rotation.z=Math.PI/2;
+   const seatG=new T.Group();seatG.position.set(0,2.6,0);sw.add(seatG);
+   [-.25,.25].forEach(x=>mesh(new T.CylinderGeometry(.01,.01,1.9,4),M('#9aa',.3,.9),x,-.95,0,seatG));mesh(new T.BoxGeometry(.6,.05,.25),M('#c0473a',.6),0,-1.9,0,seatG);
+   for(let i=0;i<3;i++){const b=mesh(new T.CylinderGeometry(.02,.04,1.2,5),barkM,rr(-.3,.3),-rr(.5,1.4),0,seatG);b.rotation.z=rr(-1,1)}crown(seatG,0,-.9,0,.35,4);
+   actors.push(t=>{seatG.rotation.x=Math.sin(t*1.6)*.12+.15})}
+  // notice board
+  {const nb=new T.Group();nb.position.set(195,0.12,-5.6);nb.rotation.y=.08;scene.add(nb);
+   [-1,1].forEach(s=>mesh(new T.CylinderGeometry(.05,.05,2.2,8),M('#5a4a3a',.7),s*1.1,1.1,0,nb));
+   const brd=mesh(new T.BoxGeometry(2.4,1.3,.08),M('#2e5a4a',.8),0,1.6,0,nb);brd.rotation.z=.06;
+   [[-.6,1.7,-.4],[.5,1.5,.2]].forEach(([x,y,r])=>{const p=mesh(new T.PlaneGeometry(.45,.6),M('#f4f0e0',.9),x,y,.05,nb,false);p.rotation.z=r});
+   for(let i=0;i<9;i++){const p=mesh(new T.PlaneGeometry(.3,.4),M('#efeadb',.9,0,{side:T.DoubleSide}),195+rr(-2,2),.14,-4.5+rr(-1,1.2),scene,false);p.rotation.x=-Math.PI/2;p.rotation.z=rnd()*6;p.receiveShadow=true}}
+  // zone signposts (blue HK-style)
+  ZONES.slice(1).forEach(z=>{const x=z.x0;mesh(new T.CylinderGeometry(.05,.05,3,8),M('#4a5458',.4,.7),x,1.6,-1.7);
+    const s=mesh(new T.BoxGeometry(.05,.5,1.6),M('#ffffff',.5,0,{map:label(z.name,{bg:'#1f4f8a',fg:'#fff',w:512,h:160,size:100,border:'#ffffff'})}),x,2.9,-1.7);s.rotation.y=Math.PI/2});
+
+  // ---------- player ----------
+  {const g=new T.Group();const coat=M('#f2b632',.55,0,{envMapIntensity:1.2}),coatD=M('#d99a1c',.6),skin=M('#e7b98f',.7);
+   const hip=new T.Group();hip.position.y=.82;g.add(hip);
+   const legs=[-1,1].map(s=>{const p=new T.Group();p.position.set(.09*s,0,0);hip.add(p);mesh(new T.CylinderGeometry(.07,.06,.75,8),M('#2e3a4a',.8),0,-.38,0,p);mesh(new T.CylinderGeometry(.075,.08,.3,8),M('#2b6a7c',.4),0,-.66,0,p);return p});
+   const torso=new T.Group();hip.add(torso);
+   mesh(new T.CylinderGeometry(.17,.27,.8,12),coat,0,.25,0,torso);
+   mesh(new T.BoxGeometry(.3,.38,.16),M('#3d5a7a',.7),0,.38,-.22,torso);
+   const head=new T.Group();head.position.y=.82;torso.add(head);
+   mesh(new T.SphereGeometry(.15,18,14),coat,0,.02,-.02,head);mesh(new T.SphereGeometry(.12,16,12),skin,0,0,.05,head);
+   mesh(new T.SphereGeometry(.015,6,6),M('#222',.5),.045,.02,.165,head);mesh(new T.SphereGeometry(.015,6,6),M('#222',.5),-.045,.02,.165,head);
+   const arms=[-1,1].map(s=>{const p=new T.Group();p.position.set(.22*s,.55,0);torso.add(p);mesh(new T.CylinderGeometry(.06,.05,.55,8),coat,0,-.27,0,p);mesh(new T.SphereGeometry(.045,8,6),skin,0,-.57,0,p);return p});
+   g.traverse(m=>{if(m.isMesh)m.castShadow=true});
+   player=g;playerParts={hip,legs,arms,torso};scene.add(g)}
+  // ---------- markers ----------
+  const markTex=ctex(128,128,(g)=>{g.fillStyle='#f2b632';g.beginPath();g.arc(64,64,54,0,7);g.fill();g.strokeStyle='#fff';g.lineWidth=6;g.stroke();g.fillStyle='#1b1407';g.font=`900 80px ${FONT}`;g.textAlign='center';g.textBaseline='middle';g.fillText('！',64,68)});
+  const doneTex=ctex(128,128,(g)=>{g.fillStyle='#86c77f';g.beginPath();g.arc(64,64,48,0,7);g.fill();g.strokeStyle='#10200e';g.lineWidth=12;g.lineCap='round';g.beginPath();g.moveTo(40,66);g.lineTo(58,84);g.lineTo(90,46);g.stroke()});
+  const endTex=label('終點',{bg:'#f2b632',fg:'#1b1407',w:256,h:128,size:80});
+  const endNumTex=label('⑧ 終點',{bg:'#f2b632',fg:'#1b1407',w:256,h:128,size:70});
+  const mkNum=n=>ctex(128,128,(g)=>{g.fillStyle='#f2b632';g.beginPath();g.arc(64,64,54,0,7);g.fill();g.strokeStyle='#fff';g.lineWidth=6;g.stroke();g.fillStyle='#1b1407';g.font=`900 76px ${FONT}`;g.textAlign='center';g.textBaseline='middle';g.fillText(String(n),64,68)});
+  for(const s of SPOTS){const sp=new T.Sprite(new T.SpriteMaterial({map:s.type==='finish'?endTex:markTex,depthTest:false,transparent:true}));sp.renderOrder=10;
+    const h=s.id==='shopsign'?2.4:s.id==='tree'?2.6:2.3;sp.position.set(s.x,h,s.z);sp.scale.setScalar(s.type==='finish'?1:.55);sp.userData={spot:s,base:h,markTex,doneTex,endTex,numTex:s.type==='finish'?endNumTex:(s.n?mkNum(s.n):null)};scene.add(sp);markers.push(sp)}
+  // fixed ring
+  const ringTex=ctex(512,512,(g)=>{g.strokeStyle='#f2b632';g.lineWidth=22;g.setLineDash([46,30]);g.beginPath();g.arc(256,256,220,0,7);g.stroke();g.setLineDash([]);g.fillStyle='rgba(242,182,50,.18)';g.beginPath();g.arc(256,256,210,0,7);g.fill();
+    g.fillStyle='#2a2208';g.font=`900 58px ${FONT}`;g.textAlign='center';g.textBaseline='middle';g.fillText('定點觀察點',256,256)});
+  ringMesh=mesh(new T.PlaneGeometry(1.8,1.8),new T.MeshBasicMaterial({map:ringTex,transparent:true,depthWrite:false}),FIX.eye.x,0.14,FIX.eye.z,scene,false);ringMesh.rotation.x=-Math.PI/2;
+  focusSprite=new T.Sprite(new T.SpriteMaterial({map:markTex,depthTest:false,transparent:true}));focusSprite.renderOrder=11;focusSprite.visible=false;scene.add(focusSprite);
+  {const sh=new T.Shape();sh.moveTo(0,1.1);sh.lineTo(.45,.45);sh.lineTo(.17,.45);sh.lineTo(.17,-.2);sh.lineTo(-.17,-.2);sh.lineTo(-.17,.45);sh.lineTo(-.45,.45);sh.closePath();
+   const ag=new T.ShapeGeometry(sh);ag.rotateX(Math.PI/2);ag.translate(0,0,.85);
+   arrow=new T.Mesh(ag,new T.MeshBasicMaterial({color:'#f2b632',transparent:true,opacity:.9,side:T.DoubleSide,depthWrite:false,fog:false}));arrow.renderOrder=5;arrow.visible=false;scene.add(arrow)}
+  // ---------- rain & flying leaves ----------
+  {const n=1600,pos=new Float32Array(n*6);for(let i=0;i<n;i++){const x=rr(-25,25),y=rr(0,18),z=rr(-14,14);pos.set([x,y,z,x+.06,y-.45,z],i*6)}
+   const g=new T.BufferGeometry();g.setAttribute('position',new T.BufferAttribute(pos,3));
+   rain=new T.LineSegments(g,new T.LineBasicMaterial({color:'#dfe8ea',transparent:true,opacity:.28,fog:true}));rain.frustumCulled=false;scene.add(rain)}
+  {const n=70;leafFly=new T.InstancedMesh(new T.PlaneGeometry(.12,.08),new T.MeshStandardMaterial({color:'#6a843e',side:T.DoubleSide,roughness:.7}),n);leafFly.userData.p=[];
+   for(let i=0;i<n;i++)leafFly.userData.p.push({x:rr(-20,20),y:rr(.3,6),z:rr(-8,10),s:rr(1,3),r:rnd()*6});leafFly.frustumCulled=false;scene.add(leafFly)}
+}
+function fallenTree(x0,z,len,r0,r1,big){
+  const barkC=ctex(256,512,(g,w,h)=>{g.fillStyle='#5a4430';g.fillRect(0,0,w,h);for(let i=0;i<90;i++){g.strokeStyle=`rgba(${rnd()<.5?'30,20,12':'120,100,80'},${rr(.2,.5)})`;g.lineWidth=rr(1,4);g.beginPath();const x=rnd()*w;g.moveTo(x,0);g.bezierCurveTo(x+rr(-10,10),h/3,x+rr(-10,10),h*2/3,x+rr(-8,8),h);g.stroke()}noise(g,w,h,.3,4000)},{repeat:[2,4]});
+  const bm=M('#ffffff',.95,0,{map:barkC});
+  const g=new T.Group();g.position.set(x0,0,z);scene.add(g);
+  const trunk=mesh(new T.CylinderGeometry(r0,r1,len,14),bm,len/2,r1*.9+.12,0,g);trunk.rotation.z=Math.PI/2;trunk.rotation.y=.04;
+  // root plate
+  const rp=mesh(new T.CylinderGeometry(r1*3,r1*3.2,.5,16),M('#3a2a1c',1,0,{flatShading:true}),-.1,r1*3*.8,0,g);rp.rotation.z=Math.PI/2;rp.scale.set(1,1,.9);
+  for(let i=0;i<14;i++){const a=i/14*Math.PI*2;const rt=mesh(new T.CylinderGeometry(.03,.09,r1*3.5,5),bm,-.3,r1*2.4+Math.sin(a)*r1*2.2,Math.cos(a)*r1*2.2,g);rt.rotation.x=a;rt.rotation.z=rr(-.3,.3)}
+  const hole=mesh(new T.CircleGeometry(r1*3,18),M('#2b2118',1),-1.2,.135,0,g,false);hole.rotation.x=-Math.PI/2;hole.scale.set(.7,1,1);
+  // branches + crown
+  const lm=['#4e6e36','#5d7a3e','#3f5f30','#71803a'].map(c=>M(c,.8,0,{flatShading:true}));
+  for(let i=0;i<(big?9:5);i++){const bx=len*rr(.55,.95);const b=mesh(new T.CylinderGeometry(.04,.12,big?3:1.8,6),bm,bx,r1+.4,rr(-.6,.6),g);b.rotation.set(rr(-1.2,1.2),0,rr(-.9,.9))}
+  const cr=big?2.6:1.5;for(let i=0;i<(big?26:12);i++){const s=cr*rr(.35,.7);const m=mesh(new T.IcosahedronGeometry(s,1),lm[i%4],len*rr(.7,1.05),rr(.5,cr*1.1),rr(-cr,cr),g);m.scale.y=rr(.55,.85);m.rotation.set(rnd()*3,rnd()*3,0)}
+  return g;
+}
+
+/* ================= STATE / INPUT ================= */
+const state={started:false,paused:true,mode:'walk',collected:new Set(),route:[],zone:null,near:null,warned:{},t:0};
+const P={x:2,z:-3.6,face:0,step:0,moving:false,target:null};
+let camYaw=-0.42,camPitch=0.32,camDist=7.2;const camPos=new T.Vector3(),camLook=new T.Vector3();
+const keys={};
+const KMAP={ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',ArrowUp:'up',w:'up',W:'up',ArrowDown:'down',s:'down',S:'down'};
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='TEXTAREA')return;
+  if(e.key==='Escape'){if(state.mode==='fixed')endFixed();else closeAll();return}
+  if(!state.started)return;
+  if(KMAP[e.key]&&state.mode==='walk'){keys[KMAP[e.key]]=true;P.target=null;e.preventDefault()}
+  if((e.key===' '||e.key==='Enter'||e.key==='e'||e.key==='E')&&!state.paused&&state.mode==='walk'){e.preventDefault();interact()}
+  if((e.key===' '||e.key==='Enter')&&state.mode==='fixed'){e.preventDefault();$('fNext')?.click()}
+});
+document.addEventListener('keyup',e=>{if(KMAP[e.key])keys[KMAP[e.key]]=false});
+document.querySelectorAll('.pad button').forEach(b=>{const k=b.dataset.k;
+  const on=e=>{e.preventDefault();keys[k]=true;P.target=null;b.setPointerCapture?.(e.pointerId)},off=()=>{keys[k]=false};
+  b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('lostpointercapture',off)});
+let drag=null;
+cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,moved:0,id:e.pointerId};cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{if(!drag||state.mode!=='walk')return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.moved+=Math.abs(dx)+Math.abs(dy);drag.x=e.clientX;drag.y=e.clientY;
+  if(drag.moved>6){camYaw-=dx*.006;camPitch=Math.max(.08,Math.min(1.1,camPitch+dy*.004));$('hint').hidden=true}});
+cv.addEventListener('pointerup',e=>{const d=drag;drag=null;if(!d||d.moved>6||state.paused||state.mode!=='walk')return;tapAt(e)});
+cv.addEventListener('wheel',e=>{if(state.mode!=='walk')return;e.preventDefault();camDist=Math.max(3.5,Math.min(14,camDist+e.deltaY*.01))},{passive:false});
+const ray=new T.Raycaster(),ndc=new T.Vector2(),groundPlane=new T.Plane(new T.Vector3(0,1,0),-0.12);
+function tapAt(e){const r=cv.getBoundingClientRect();ndc.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);ray.setFromCamera(ndc,camera);
+  const hits=ray.intersectObjects(markers.filter(m=>m.visible));if(hits.length){const s=hits[0].object.userData.spot;if(Math.hypot(s.x-P.x,s.z-P.z)<4){openSpot(s);return}P.target={x:s.x,z:s.z};return}
+  const pt=new T.Vector3();if(ray.ray.intersectPlane(groundPlane,pt))P.target={x:pt.x,z:pt.z}}
+$('act').addEventListener('click',()=>{if(!state.paused&&state.mode==='walk')interact()});
+
+function blocked(x,z){if(x<-12||x>228||z<-5.9||z>9.7)return true;for(const b of BOXES)if(x>b.x0&&x<b.x1&&z>b.z0&&z<b.z1)return true;return false}
+
+/* ================= AUDIO ================= */
+let AC=null,soundOn=false,rainGain=null;
+function initAudio(){if(AC)return;try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return}
+  const len=AC.sampleRate*2,buf=AC.createBuffer(1,len,AC.sampleRate),d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;AC._noise=buf;
+  const src=AC.createBufferSource();src.buffer=buf;src.loop=true;const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=1400;rainGain=AC.createGain();rainGain.gain.value=0;
+  src.connect(f);f.connect(rainGain);rainGain.connect(AC.destination);src.start()}
+function setSound(on){soundOn=on;$('bSound').textContent='聲音：'+(on?'開':'關');$('bSound').setAttribute('aria-pressed',on);
+  if(on){initAudio();if(AC){AC.resume();rainGain.gain.setTargetAtTime(.05,AC.currentTime,.4)}}else if(AC)rainGain.gain.setTargetAtTime(0,AC.currentTime,.2)}
+function tone(f,d,type='sine',v=.12){if(!soundOn||!AC)return;const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}
+function splashSound(){if(!soundOn||!AC)return;const s=AC.createBufferSource();s.buffer=AC._noise;const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=900;const g=AC.createGain();g.gain.setValueAtTime(.3,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.35);s.connect(f);f.connect(g);g.connect(AC.destination);s.start();s.stop(AC.currentTime+.4)}
+function chime(){tone(660,.25,'triangle');setTimeout(()=>tone(990,.35,'triangle'),110)}
+
+/* ================= UPDATE ================= */
+const tmpV=new T.Vector3(),dummy=new T.Object3D();
+function update(dt){
+  state.t+=dt;const t=state.t;
+  if(state.mode==='walk'&&!state.paused){
+    const fx=Math.cos(camYaw),fz=Math.sin(camYaw),rx=-fz,rz=fx;
+    let ix=(keys.right?1:0)-(keys.left?1:0),iy=(keys.up?1:0)-(keys.down?1:0);
+    let dx=fx*iy+rx*ix,dz=fz*iy+rz*ix;
+    if(P.target&&!ix&&!iy){const tx=P.target.x-P.x,tz=P.target.z-P.z,d=Math.hypot(tx,tz);if(d<.15)P.target=null;else{dx=tx/d;dz=tz/d}}
+    const m=Math.hypot(dx,dz);P.moving=m>0;
+    if(P.moving){dx/=m;dz/=m;const sp=4.6*dt;const nx=P.x+dx*sp,nz=P.z+dz*sp;
+      let moved=false;if(!blocked(nx,P.z)){P.x=nx;moved=true}if(!blocked(P.x,nz)){P.z=nz;moved=true}if(!moved)P.target=null;
+      const want=Math.atan2(dx,dz);let diff=want-P.face;diff=Math.atan2(Math.sin(diff),Math.cos(diff));P.face+=diff*Math.min(1,dt*12);P.step+=dt*9}
+    // zone
+    const z=ZONES.find(z=>P.x>=z.x0&&P.x<z.x1);
+    if(z&&z!==state.zone){state.zone=z;$('zoneName').textContent=z.name;if(!state.route.includes(z.name)){state.route.push(z.name);renderRoute();if(state.started)toast('來到：'+z.name)}}
+    let best=null,bd=1e9;for(const s of SPOTS){if(!active(s))continue;const d=Math.hypot(s.x-P.x,s.z-P.z);if(d<2.4&&d<bd){bd=d;best=s}}
+    if(best!==state.near){state.near=best;const a=$('act');if(best){a.classList.add('on');a.textContent=(best.type==='fixed'?'站上去：':best.type==='finish'?'進入：':'查看：')+best.name}else{a.classList.remove('on');a.textContent='走近發亮的「！」'}}
+    const onGround=P.z<-1.5||P.z>7.15?0.12:0;
+    const inP=PUDDLES.some(p=>((P.x-p.x)/p.rx)**2+((P.z-p.z)/p.rz)**2<1);
+    if(inP&&!state.warned.puddle){state.warned.puddle=true;toast('啪！你踩進水窪，鞋襪全濕透了。');splashSound()}
+    if(inP&&P.moving&&Math.random()<.04)splashSound();
+    if(Math.abs(P.x-110)<2&&P.z<-2.4&&!state.warned.sign){state.warned.sign=true;toast('小心頭頂！招牌搖搖欲墜。');tone(220,.3,'sawtooth',.05)}
+    if(P.x>143&&P.x<148&&P.z<-2&&!state.warned.tree){state.warned.tree=true;toast('大樹擋住去路！試試從馬路繞過去。')}
+    if(P.x>222&&!state.warned.end){state.warned.end=true;openEnd()}
+    // player pose
+    player.position.set(P.x,onGround,P.z);player.rotation.y=P.face;
+    const nxt=classMode?REQ.find(s=>!state.collected.has(s.id)):null;
+    if(nxt){const d=Math.hypot(nxt.x-P.x,nxt.z-P.z);setNext(`下一個：${CIRC[nxt.n]} ${nxt.name}　約 ${Math.max(1,Math.round(d))} 米`);arrow.visible=d>3;arrow.position.set(P.x,onGround+.04,P.z);arrow.rotation.y=Math.atan2(nxt.x-P.x,nxt.z-P.z);arrow.material.opacity=.65+Math.sin(t*4)*.25}
+    else{setNext(classMode?'紀錄表全部完成！打開「筆記簿」核對答案。':'');arrow.visible=false}
+    const sw=P.moving?Math.sin(P.step):0;playerParts.legs[0].rotation.x=sw*.6;playerParts.legs[1].rotation.x=-sw*.6;playerParts.arms[0].rotation.x=-sw*.5;playerParts.arms[1].rotation.x=sw*.5;
+    playerParts.hip.position.y=.82+(P.moving?Math.abs(Math.cos(P.step))*.04:Math.sin(t*2)*.005);
+    // camera
+    const cp=Math.cos(camPitch);tmpV.set(P.x-fx*camDist*cp,onGround+1.2+Math.sin(camPitch)*camDist,P.z-fz*camDist*cp);
+    camPos.lerp(tmpV,Math.min(1,dt*6));camLook.lerp(new T.Vector3(P.x+fx*1.2,onGround+1.2,P.z+fz*1.2),Math.min(1,dt*8));
+  }
+  if(state.mode==='fixed'){camPos.lerp(FIX.eye,Math.min(1,dt*3));camLook.lerp(FX.look,Math.min(1,dt*2.2))}
+  camera.position.copy(camPos);camera.lookAt(camLook);
+  sun.position.set(camPos.x-12,30,camPos.z-14);sun.target.position.set(camLook.x,0,camLook.z);
+  sky.position.copy(camera.position);
+  for(const a of actors)a(t,dt);
+  // markers
+  for(const sp of markers){const s=sp.userData.spot,done=state.collected.has(s.id),num=classMode&&sp.userData.numTex;sp.position.y=sp.userData.base+Math.sin(t*2.5+s.x)*.08;
+    if(s.type!=='finish'){sp.material.map=done?sp.userData.doneTex:(num||sp.userData.markTex);const pul=done?.42:.55+Math.sin(t*4)*.05;sp.scale.setScalar(state.near===s&&!done?pul*1.25:pul)}
+    else sp.material.map=num||sp.userData.endTex;
+    sp.visible=state.mode==='walk'&&active(s)}
+  ringMesh.material.opacity=.75+Math.sin(t*3)*.25;ringMesh.rotation.z=t*.3;
+  // rain
+  const rp=rain.geometry.attributes.position.array;for(let i=0;i<rp.length;i+=6){rp[i+1]-=dt*9;rp[i+4]-=dt*9;rp[i]+=dt*.8;rp[i+3]+=dt*.8;if(rp[i+4]<0){const y=rr(14,18);rp[i+1]=y;rp[i+4]=y-.45;const x=rr(-25,25);rp[i]=x;rp[i+3]=x+.06}}
+  rain.geometry.attributes.position.needsUpdate=true;rain.position.set(camPos.x,0,camPos.z);
+  for(const r of ripples){r.t+=dt*r.s;if(r.t>1)r.t=0;r.m.scale.setScalar(.05+r.t*.5);r.m.material.opacity=(1-r.t)*.5}
+  const lp=leafFly.userData.p;for(let i=0;i<lp.length;i++){const p=lp[i];p.x-=dt*p.s;p.y+=Math.sin(t*2+i)*dt*.6-dt*.15;p.r+=dt*3;if(p.x<-20||p.y<.1){p.x=20;p.y=rr(1,6);p.z=rr(-8,10)}
+    dummy.position.set(camPos.x+p.x,p.y,p.z);dummy.rotation.set(p.r,p.r*.7,p.r*.3);dummy.updateMatrix();leafFly.setMatrixAt(i,dummy.matrix)}
+  leafFly.instanceMatrix.needsUpdate=true;
+}
+let last=performance.now(),running=false;
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;update(dt);renderer.render(scene,camera);requestAnimationFrame(loop)}
+
+/* ================= UI ================= */
+let toastT=0;
+function toast(msg){const t=$('toast');t.textContent=msg;t.style.opacity=1;clearTimeout(toastT);toastT=setTimeout(()=>t.style.opacity=0,2600)}
+function renderRoute(){const r=$('route');r.innerHTML='<b>我的路線（步移法）</b>';state.route.forEach((z,i)=>{if(i){const a=document.createElement('span');a.className='arr';a.textContent='→';r.appendChild(a)}const c=document.createElement('span');c.className='chip';c.textContent=z;r.appendChild(c)})}
+function updateCount(){const L=classMode?REQ:COUNTABLE;$('cnt').textContent=L.filter(s=>state.collected.has(s.id)).length;$('tot').textContent=L.length;$('cntLabel').textContent=classMode?'已完成':'已收集'}
+let nextTxt=null;function setNext(t){if(t===nextTxt)return;nextTxt=t;const e=$('next');e.hidden=!t;e.textContent=t}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+const OVS=['ovCard','ovNote','ovCoach','ovEnd'];
+function openOv(id){OVS.forEach(o=>$(o).hidden=o!==id);state.paused=true;for(const k in keys)keys[k]=false;P.target=null}
+function closeAll(){if(!state.started)return;OVS.forEach(o=>$(o).hidden=true);if(state.mode==='walk')state.paused=false}
+function interact(){if(state.near)openSpot(state.near)}
+function openSpot(s){
+  if(s.type==='fixed')return startFixed();
+  if(s.type==='finish')return openEnd();
+  const done=state.collected.has(s.id);
+  const senses=Object.entries(s.senses).map(([k,v])=>`<li><span class="k">${k}</span><span>${esc(v)}</span></li>`).join('');
+  $('cardBody').innerHTML=`<div class="eyebrow">${ZONES.find(z=>z.id===s.zone).name}　觀察${classMode&&s.n?`　｜　填寫紀錄表第 ${s.n} 行`:''}</div><h2>${esc(s.name)}</h2><ul class="senses">${senses}</ul>
+    <div class="sentence">${esc(s.sentence)}</div>
+    <div class="q">在筆記上寫下：這句運用了甚麼寫作手法？（直接描寫／間接描寫／比喻描寫）</div>
+    <div class="muted">把例句抄在筆記對應的地點，再寫上你的答案。答案留待最後一起核對。</div>
+    <div class="words">${s.words.map(w=>`<span>${esc(w)}</span>`).join('')}</div>
+    <div class="fb ok" id="fb" aria-live="polite">${done?'已記錄。':''}</div>
+    <div class="row"><button class="btn" type="button" id="cClose">稍後再寫</button><button class="btn primary" type="button" id="cDone">${done?'繼續上路':'已寫好，繼續上路'}</button></div>`;
+  openOv('ovCard');
+  $('cDone').addEventListener('click',()=>{if(!state.collected.has(s.id)){state.collected.add(s.id);updateCount();chime()}closeAll()});
+  $('cClose').addEventListener('click',closeAll);$('cDone').focus();
+}
+function hint(m){return{'直接描寫':'再想想：句子是直接寫景物本身，還是借人物的反應來烘托？',
+  '間接描寫':'再想想：句子有沒有寫人物的反應？還是只寫景物本身的樣子？',
+  '比喻描寫':'句子裏有沒有「像」、「好像」、「彷彿」，把景物比作另一樣東西？'}[m]}
+
+/* ---------- fixed-point (first-person) ---------- */
+const FX={step:0,order:'near',look:new T.Vector3()};
+const BANDS={near:{label:'近景（腳邊）',text:'一個大水窪倒映着灰濛濛的天空，我的鞋尖已經濕了。',short:'腳邊的大水窪倒映着灰濛濛的天空'},
+ mid:{label:'中景（身旁）',text:'巴士站牌歪向一邊，好像一個站不穩的醉漢。',short:'身旁的巴士站牌歪向一邊，好像一個站不穩的醉漢'},
+ far:{label:'遠景（對面馬路）',text:'一棵大樹橫躺在行人路上，工人正忙着鋸開樹幹。',short:'對面馬路一棵大樹橫躺在行人路上，工人正忙着鋸樹'}};
+function seq(){return FX.order==='near'?['near','mid','far']:['far','mid','near']}
+function startFixed(){state.mode='fixed';state.paused=true;for(const k in keys)keys[k]=false;P.target=null;P.x=FIX.eye.x;P.z=FIX.eye.z;player.visible=false;arrow.visible=false;setNext('');
+  FX.step=0;FX.look.copy(camLook);$('pad').hidden=true;$('act').hidden=true;$('hint').hidden=true;$('fixedPanel').hidden=false;renderFixed()}
+function endFixed(){state.mode='walk';state.paused=false;player.visible=true;focusSprite.visible=false;$('pad').hidden=false;$('act').hidden=false;$('fixedPanel').hidden=true;P.z=FIX.eye.z+.9;camYaw=-0.42}
+function renderFixed(){
+  const sq=seq(),cur=FX.step>0&&FX.step<=3?sq[FX.step-1]:null;
+  FX.look.copy(cur?FIX.views[cur]:FIX.views.start);
+  focusSprite.visible=!!cur;if(cur){const v=FIX.views[cur];focusSprite.position.set(v.x,v.y+(cur==='near'?.35:1.1),v.z);focusSprite.scale.setScalar(cur==='far'?.9:.35)}
+  let body;
+  if(FX.step===0)body=`<div>你現在就是「我」，站在巴士站。<b>腳不動，只移動視線。</b>選擇視線移動的次序：</div>${classMode?'<div class="muted">完成後，在紀錄表第 4 行寫下近景、中景、遠景各是甚麼。</div>':''}`;
+  else if(cur)body=`<div class="eyebrow">第 ${FX.step} 步　${BANDS[cur].label}</div><div class="sentence">${BANDS[cur].text}</div>`;
+  else{const s=sq.map(k=>BANDS[k].short);body=`<div class="eyebrow">完成！把三句連起來</div><div class="sentence">我站在巴士站，先看到${s[0]}；再望向${s[1]}；最後，${s[2]}。</div><div class="muted">次序：${FX.order==='near'?'由近至遠':'由遠至近'}。這就是定點描寫。${classMode?'請在紀錄表第 4 行寫下近、中、遠景。':''}</div>`}
+  $('fixedPanel').innerHTML=`<h3>定點描寫：站定不動，視線${FX.order==='near'?'由近至遠':'由遠至近'}</h3>${body}
+    <div class="row">${FX.step===0?`<button class="btn" type="button" id="fOrder">改為${FX.order==='near'?'由遠至近':'由近至遠'}</button>`:''}
+    ${FX.step<4?`<button class="btn primary" type="button" id="fNext">${FX.step===0?'開始觀察':'視線移向下一處'}</button>`:`<button class="btn" type="button" id="fAgain">再看一次</button><button class="btn primary" type="button" id="fDone">繼續上路</button>`}</div>`;
+  $('fOrder')?.addEventListener('click',()=>{FX.order=FX.order==='near'?'far':'near';renderFixed()});
+  $('fNext')?.addEventListener('click',()=>{FX.step++;if(FX.step===4&&!state.collected.has('fixed')){state.collected.add('fixed');updateCount();chime()}tone(520+FX.step*80,.15,'triangle');renderFixed()});
+  $('fAgain')?.addEventListener('click',()=>{FX.step=0;renderFixed()});
+  $('fDone')?.addEventListener('click',endFixed);
+  ($('fNext')||$('fDone')).focus();
+}
+
+/* ---------- notebook ---------- */
+let reveal=false;
+function openNote(){
+  const L=classMode?REQ:COUNTABLE,doneN=L.filter(s=>state.collected.has(s.id)).length;
+  const tally=reveal?METHODS.map(m=>{const all=L.filter(s=>s.method===m),got=all.filter(s=>state.collected.has(s.id));return`<span>${m} ${got.length}/${all.length}</span>`}).join('')+`<span>定點描寫 ${state.collected.has('fixed')?1:0}/1</span>`:'<span>答案未公佈：先在筆記寫好，再按「核對答案」</span>';
+  const num=s=>classMode&&s.n?CIRC[s.n]+' ':'';
+  let list='';for(const z of ZONES){const got=SPOTS.filter(s=>s.zone===z.id&&s.sentence&&active(s)&&(reveal||state.collected.has(s.id))).sort((a,b)=>(a.n||0)-(b.n||0));if(!got.length)continue;
+    list+=`<div class="nb-zone">${z.name}</div>`+got.map(s=>`<div class="nb-item"><div>${reveal?`<span class="tag">${s.method}</span>`:''}${num(s)}${esc(s.name)}${!state.collected.has(s.id)?'<span class="muted">（未查看）</span>':''}</div><div style="font-family:var(--display);font-size:18px">${esc(s.sentence)}</div>${reveal?`<div class="muted">${esc(s.why)}</div>`:''}<div class="words">${s.words.map(w=>`<span>${esc(w)}</span>`).join('')}</div></div>`).join('')}
+  if(state.collected.has('fixed')||reveal)list+=`<div class="nb-zone">${classMode?'④ ':''}巴士站．定點觀察點</div><div class="nb-item">${reveal?'<span class="tag">定點描寫</span>':''}近：大水窪　中：巴士站牌　遠：對面倒下的大樹（${FX.order==='near'?'由近至遠':'由遠至近'}）</div>`;
+  if(state.route.length||reveal)list+=`<div class="nb-zone">${classMode?'⑧ ':''}學校門口．我的路線</div><div class="nb-item">${reveal?'<span class="tag">步移法</span>':''}${(reveal?ZONES.map(z=>z.name):state.route).join(' → ')}</div>`;
+  $('noteBody').innerHTML=`<div class="eyebrow">我的寫作筆記簿${classMode?'　｜　課堂模式：只列紀錄表 ①至⑧':''}</div><h2>${classMode?'已完成':'已收集'} ${doneN} / ${L.length}</h2><div class="tally">${tally}</div>
+    ${list||'<p class="muted">還未查看任何景物。跟着地上的黃色箭咀出發吧。</p>'}<div class="row"><button class="btn" type="button" id="nReveal">${reveal?'隱藏答案':'核對答案'}</button><button class="btn primary" type="button" id="nClose">返回街道</button></div>`;
+  openOv('ovNote');$('nClose').addEventListener('click',closeAll);$('nReveal').addEventListener('click',()=>{reveal=!reveal;openNote()});$('nClose').focus();
+}
+
+/* ---------- AI coach ---------- */
+const samplePromise=(window.claude&&window.claude.use)?window.claude.use('sample').catch(()=>null):Promise.resolve(null);
+let coachAbort=null,coachDraft='';
+function openCoach(){
+  $('coachBody').innerHTML=`<div class="eyebrow">AI 寫作教練</div><h2>寫一句，請 AI 老師評一評</h2>
+    <p class="muted" style="margin:0">試用今日重溫的手法，寫一句暴風雨後街道的描寫。可以參考筆記簿的詞語。</p>
+    <label for="cIn" class="muted">我的句子</label>
+    <textarea id="cIn" placeholder="例如：巴士站旁的大樹倒在地上，路人都要繞道而行。">${esc(coachDraft)}</textarea>
+    <div class="row"><button class="btn" type="button" id="cBack">返回街道</button><button class="btn primary" type="button" id="cGo">請 AI 老師評一評</button></div>
+    <div class="coach-out" id="cOut" aria-live="polite">AI 老師會告訴你：用了哪些寫作手法、可以怎樣升級。</div>`;
+  openOv('ovCoach');const inp=$('cIn');inp.addEventListener('input',()=>coachDraft=inp.value);inp.focus();
+  $('cBack').addEventListener('click',()=>{coachAbort?.abort();closeAll()});$('cGo').addEventListener('click',runCoach);
+}
+async function runCoach(){
+  const s=$('cIn').value.trim(),out=$('cOut'),btn=$('cGo');
+  if(s.length<6){out.textContent='句子太短了，最少寫一句完整的句子（六個字以上）。';return}
+  const sample=await samplePromise;
+  if(!sample){out.textContent='這個畫面暫時連接不到 AI 老師。請老師把句子貼到課堂用的 AI 工具，並請它指出用了哪些寫作手法，再給一個升級建議。';return}
+  coachAbort?.abort();coachAbort=new AbortController();btn.disabled=true;out.textContent='AI 老師正在閱讀……';
+  const prompt=`你是香港中學的中國語文科老師，學生是中二級，語文能力較弱，學習動機不高。學生以《暴風雨後的街道》為題，練習寫景，寫了以下句子。
+請用繁體中文書面語回應，語氣親切、鼓勵、簡單易明，不要使用表情符號，不要使用 Markdown 符號（例如 * 或 #）。依以下格式，全部不超過 160 字：
+讚賞：一句具體的讚賞。
+寫作手法：從「直接描寫、間接描寫、比喻描寫、定點描寫、步移法」中，指出句子真正用了的手法，並引原句的幾個字作證；沒有用到就不要說有。
+升級建議：一個具體、容易做到的建議。
+示範：把句子改寫得更生動，不超過 60 字。
+如果句子與暴風雨後的街道無關，請溫和地提醒學生扣題。
+學生句子：「${s}」`;
+  try{const r=await sample(prompt,{modelTier:'quick',signal:coachAbort.signal,onText:({text})=>{out.textContent=text}});out.textContent=r.text}
+  catch(e){if(e&&e.name==='AbortError')return;out.textContent=e&&e.code==='not_granted'?'AI 老師未獲授權使用。請在這個頁面允許「詢問 Claude」後再試。':e&&e.code==='rate_limited'?'太多人同時發問，請等一會兒再試。':'AI 老師暫時未能回覆，請稍後再試。'}
+  finally{btn.disabled=false}
+}
+
+/* ---------- finish ---------- */
+function openEnd(){
+  if(!state.collected.has('finish')){state.collected.add('finish');updateCount()}
+  const got=COUNTABLE.filter(s=>state.collected.has(s.id));
+  const paras=ZONES.map(z=>{const ss=SPOTS.filter(s=>s.zone===z.id&&s.sentence&&state.collected.has(s.id)).map(s=>s.sentence);
+    return`<li><b>正文（步移法）．${z.name}</b>${z.id==='bus'?'（定點描寫）':''}<br><span class="muted">${ss.length?esc(ss.join('')):'（這裏還未收集句子）'}</span></li>`}).join('');
+  const aiPrompt='請畫一幅寫實照片風格的圖片，不要加入文字：香港街道，暴風雨過後的清晨，天色灰暗。'+(got.length?got.slice(0,6).map(s=>s.sentence).join(''):'倒塌的大樹、滿地落葉、歪斜的巴士站牌、積水的路面。');
+  $('endBody').innerHTML=`<div class="eyebrow">到達學校門口</div><h2>你用步移法走完了這條街</h2>
+    <p style="margin:0">${classMode?`完成了 <b style="color:var(--coat)">${REQ.filter(s=>state.collected.has(s.id)).length} / ${REQ.length}</b> 項紀錄`:`收集了 <b style="color:var(--coat)">${got.length} / ${COUNTABLE.length}</b> 個描寫`}。你的行走路線，就是文章的段落次序${classMode?'（請抄在紀錄表第 8 行）':''}：</p>
+    <div class="route glass" style="max-width:100%"><b>路線</b>${state.route.map((z,i)=>(i?'<span class="arr">→</span>':'')+`<span class="chip">${z}</span>`).join('')}</div>
+    <ol class="steps-list" style="list-style:none;padding:0"><li><b>開首：交代背景</b><br><span class="muted">昨夜十號風球，今早出門上學，發現街道面目全非。</span></li>${paras}<li><b>結尾：抒發感受</b><br><span class="muted">驚歎大自然的破壞力，感謝默默清理街道的人。</span></li></ol>
+    <div class="eyebrow">AI 繪圖提示詞（老師可複製到 AI 繪圖工具）</div><textarea id="aiP" readonly>${esc(aiPrompt)}</textarea>
+    <div class="row"><button class="btn" type="button" id="eCopy">複製提示詞</button><button class="btn" type="button" id="eBack">繼續探索</button><button class="btn" type="button" id="eCoach">AI 寫作教練</button><button class="btn primary" type="button" id="eCheck">核對答案</button></div>`;
+  openOv('ovEnd');chime();
+  $('eCheck').addEventListener('click',()=>{reveal=true;openNote()});
+  $('eCopy').addEventListener('click',async()=>{const t=$('aiP');try{await navigator.clipboard.writeText(t.value);$('eCopy').textContent='已複製'}catch(e){t.focus();t.select();$('eCopy').textContent='已選取，請按 Ctrl+C'}});
+  $('eBack').addEventListener('click',()=>{P.x=Math.min(P.x,218);state.warned.end=false;closeAll()});
+  $('eCoach').addEventListener('click',openCoach);$('eCoach').focus();
+}
+
+/* ---------- buttons / boot ---------- */
+$('bStart').addEventListener('click',()=>{state.started=true;$('ovStart').hidden=true;state.paused=false;setSound(true);toast('出發！先看看大廈門口。')});
+$('bNote').addEventListener('click',()=>{if(state.started)openNote()});
+$('bCoach').addEventListener('click',()=>{if(!state.started){state.started=true;$('ovStart').hidden=true}openCoach()});
+$('bSound').addEventListener('click',()=>setSound(!soundOn));
+$('bFull').addEventListener('click',()=>{try{const p=document.fullscreenElement?document.exitFullscreen():stage.requestFullscreen();p&&p.catch&&p.catch(()=>toast('這個畫面不支援全螢幕，可改用瀏覽器的全螢幕模式。'))}catch(e){toast('這個畫面不支援全螢幕，可改用瀏覽器的全螢幕模式。')}});
+$('bMode').addEventListener('click',()=>{classMode=!classMode;$('bMode').textContent='課堂模式：'+(classMode?'開':'關');$('bMode').setAttribute('aria-pressed',classMode);state.near=undefined;updateCount();if(!classMode){setNext('');arrow&&(arrow.visible=false)}
+  toast(classMode?'課堂模式：只顯示紀錄表要寫的 ①至⑧':'自由探索：顯示全部 16 個景物')});
+renderRoute();updateCount();
+const fontsReady=document.fonts&&document.fonts.load?Promise.all([document.fonts.load(`900 40px "Noto Sans TC"`,'巴士站海鮮'),document.fonts.load(`700 40px "LXGW WenKai TC"`,'學校公園街市海景大廈')]).catch(()=>{}):Promise.resolve();
+Promise.race([fontsReady,new Promise(r=>setTimeout(r,2500))]).then(()=>{
+  try{build()}catch(e){$('loading').textContent='佈置街道時出錯：'+e.message;console.error(e);return}
+  resize();player.position.set(P.x,.12,P.z);player.rotation.y=Math.PI/2;P.face=Math.PI/2;
+  const fx=Math.cos(camYaw),fz=Math.sin(camYaw);camPos.set(P.x-fx*camDist,1.2+camDist*.32,P.z-fz*camDist);camLook.set(P.x,1.2,P.z);
+  update(0.016);
+  $('loading').remove();$('bStart').disabled=false;$('bStart').textContent='開始上學';
+  requestAnimationFrame(t=>{last=t;loop(t)});
+});
+})();
+</script>
+
+</body></html>
